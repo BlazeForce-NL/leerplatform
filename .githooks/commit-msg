@@ -1,0 +1,76 @@
+#!/bin/sh
+
+set -eu
+
+if [ "${SKIP_TEST_GUARD:-0}" = "1" ]; then
+  exit 0
+fi
+
+MSG_FILE="${1:-}"
+
+if [ -z "$MSG_FILE" ] || [ ! -f "$MSG_FILE" ]; then
+  exit 0
+fi
+
+FIRST_LINE="$(sed -n '1p' "$MSG_FILE")"
+
+case "$FIRST_LINE" in
+  Merge*|fixup\!*|squash\!*)
+    exit 0
+    ;;
+esac
+
+STAGED_FILES="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+has_code_impact=0
+
+for file in $STAGED_FILES; do
+  case "$file" in
+    src/*|public/*|package.json|pnpm-lock.yaml|next.config.ts|tailwind.config.*|postcss.config.*)
+      has_code_impact=1
+      ;;
+  esac
+done
+
+if [ "$has_code_impact" -eq 0 ]; then
+  exit 0
+fi
+
+has_verification_header=0
+has_tests_line=0
+has_gaps_line=0
+
+if grep -Eq '^Verification:\s*$' "$MSG_FILE"; then
+  has_verification_header=1
+fi
+
+if grep -Eq '^Tests:\s+\S.+' "$MSG_FILE"; then
+  has_tests_line=1
+fi
+
+if grep -Eq '^Gaps:\s+\S.+' "$MSG_FILE"; then
+  has_gaps_line=1
+fi
+
+if [ "$has_verification_header" -eq 1 ] && [ "$has_tests_line" -eq 1 ] && [ "$has_gaps_line" -eq 1 ]; then
+  exit 0
+fi
+
+echo "Verification guard blocked this commit."
+echo ""
+echo "Code-impacting commits must include a verification footer in the commit message."
+echo ""
+echo "Required format:"
+echo "Verification:"
+echo "Tests: pnpm test"
+echo "Gaps: None"
+echo ""
+echo "If this commit genuinely cannot include it yet, bypass once with:"
+echo "SKIP_TEST_GUARD=1 git commit ..."
+echo ""
+echo "You can also use: git commit --no-verify"
+exit 1

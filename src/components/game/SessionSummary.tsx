@@ -1,0 +1,33 @@
+interface Props {
+  player: string;
+  score: number;
+  correct: number;
+  total: number;
+  isNewHigh: boolean;
+  onPlay: () => void;
+  onBoard: () => void;
+}
+
+export default function SessionSummary({ player, score, correct, total, isNewHigh, onPlay, onBoard }: Props) {
+  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const emoji = pct >= 90 ? "🌟" : pct >= 70 ? "😄" : pct >= 50 ? "🙂" : "💪";
+
+  return (
+    <div className="text-center py-8 px-2.5">
+      <div className="text-5xl mb-2">{emoji}</div>
+      {isNewHigh && (
+        <div className="text-base font-bold text-amber-500 mb-2">🏆 Nieuw record, {player}!</div>
+      )}
+      <div className="text-[28px] font-extrabold text-brand-blue mb-1">{score} punten</div>
+      <div className="text-sm text-gray-500 mb-5">{correct} van {total} goed ({pct}%)</div>
+      <div className="flex gap-2.5 justify-center flex-wrap">
+        <button type="button" onClick={onPlay} className="py-3 px-7 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer">
+          Nog een keer!
+        </button>
+        <button type="button" onClick={onBoard} className="py-3 px-7 rounded-full bg-brand-yellow border-none text-gray-800 text-base font-bold cursor-pointer">
+          Scorebord 🏆
+        </button>
+      </div>
+    </div>
+  );
+}

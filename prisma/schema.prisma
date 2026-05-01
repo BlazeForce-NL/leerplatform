@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+enum Role {
+  PLATFORM_ADMIN
+  SCHOOL_ADMIN
+  TEACHER
+  STUDENT
+}
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  email        String?   @unique
+  name         String
+  role         Role
+  passwordHash String?
+  deletedAt    DateTime? // soft-delete: GDPR recht op vergetelheid
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  schoolAdmins  SchoolAdmin[]
+  classTeachers ClassTeacher[]
+  memberships   ClassMembership[]
+  sessions      Session[]
+  authTokens    AuthToken[]
+
+  @@map("users")
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+
+model AuthToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique @default(cuid())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("auth_tokens")
+}
+
+// ── Schools ───────────────────────────────────────────────────────────────────
+
+model School {
+  id        String    @id @default(cuid())
+  name      String
+  deletedAt DateTime? // soft-delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  admins  SchoolAdmin[]
+  classes Class[]
+
+  @@map("schools")
+}
+
+model SchoolAdmin {
+  schoolId String
+  userId   String
+
+  school School @relation(fields: [schoolId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@id([schoolId, userId])
+  @@map("school_admins")
+}
+
+// ── Classes ───────────────────────────────────────────────────────────────────
+
+model Class {
+  id        String    @id @default(cuid())
+  name      String
+  schoolId  String
+  deletedAt DateTime? // soft-delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  school      School            @relation(fields: [schoolId], references: [id])
+  teachers    ClassTeacher[]
+  memberships ClassMembership[]
+
+  @@map("classes")
+}
+
+model ClassTeacher {
+  classId String
+  userId  String
+
+  class Class @relation(fields: [classId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@id([classId, userId])
+  @@map("class_teachers")
+}
+
+// ── Class memberships ─────────────────────────────────────────────────────────
+
+model ClassMembership {
+  id       String   @id @default(cuid())
+  classId  String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  class Class @relation(fields: [classId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([classId, userId])
+  @@map("class_memberships")
+}
+
+// ── Game sessions & scores ────────────────────────────────────────────────────
+
+model Session {
+  id            String   @id @default(cuid())
+  userId        String
+  mode          String   // "plus" | "min" | "mix" | "tafel" | "tafel_specific" | "alles"
+  specificTable Int?
+  timerSetting  Int      @default(0)
+  score         Int
+  correct       Int
+  total         Int
+  playedAt      DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id])
+  scores Score[]
+
+  @@map("sessions")
+}
+
+model Score {
+  id        String @id @default(cuid())
+  sessionId String
+  category  String // scoreCat() waarde, bijv. "plus", "tafel_3_timer30"
+  score     Int
+
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@map("scores")
+}

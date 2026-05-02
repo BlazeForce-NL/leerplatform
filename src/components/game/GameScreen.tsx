@@ -83,10 +83,10 @@ export default function GameScreen({
         <div className="text-sm text-gray-500 font-semibold" aria-hidden="true">👤 {player}</div>
         <div className="text-lg font-bold text-gray-800" aria-label="Numberblocks Rekenspel">Numberblocks</div>
         <div className="flex gap-1.5">
-          <button type="button" onClick={onOpenBoard}
+          <button type="button" onPointerUp={onOpenBoard}
             className="px-2.5 py-1 min-h-touch min-w-[44px] rounded-2xl border-2 border-gray-300 bg-white text-gray-600 text-xs font-semibold cursor-pointer"
             aria-label="Scorebord openen">🏆</button>
-          <button type="button" onClick={onStop}
+          <button type="button" onPointerUp={onStop}
             className="px-2.5 py-1 min-h-touch rounded-2xl border-2 border-gray-300 bg-white text-gray-600 text-xs font-semibold cursor-pointer">
             Stop <span aria-hidden="true">🏁</span>
           </button>
@@ -106,10 +106,10 @@ export default function GameScreen({
       {/* Mode buttons */}
       <div role="group" aria-label="Oefenmodus kiezen" className="flex flex-wrap justify-center gap-1.5 mb-1.5">
         {([["plus","Optellen"],["min","Aftrekken"],["mix","+ en −"],["alles","Alles mix"]] as [Mode,string][]).map(([m,l]) => (
-          <button type="button" key={m} onClick={() => onChangeMode(m)}
+          <button type="button" key={m} onPointerUp={() => onChangeMode(m)}
             aria-pressed={ap(mode === m)} className={modeBtn(mode === m, m)}>{l}</button>
         ))}
-        <button type="button" onClick={onToggleTafelMenu}
+        <button type="button" onPointerUp={onToggleTafelMenu}
           aria-pressed={ap(mode === "tafel" || mode === "tafel_specific")}
           aria-expanded={ap(showTafelMenu)}
           aria-controls="tafel-menu"
@@ -123,10 +123,10 @@ export default function GameScreen({
         <div id="tafel-menu" className="bg-white rounded-2xl p-3 max-w-[460px] mx-auto mb-2 shadow-sm">
           <div className="text-xs font-semibold text-gray-500 mb-1.5">Welke tafel?</div>
           <div className="flex flex-wrap gap-1 mb-2">
-            <button type="button" onClick={onSelectAllTables}
+            <button type="button" onPointerUp={onSelectAllTables}
               className={modeBtn(mode === "tafel", "tafel")}>Alle willekeurig</button>
             {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-              <button type="button" key={n} onClick={() => onSelectSpecificTable(n)}
+              <button type="button" key={n} onPointerUp={() => onSelectSpecificTable(n)}
                 className={modeBtn(mode === "tafel_specific" && specificTable === n, "tafel")}>×{n}</button>
             ))}
           </div>
@@ -135,7 +135,7 @@ export default function GameScreen({
               <div className="text-xs font-semibold text-gray-500 mb-1.5">Volgorde?</div>
               <div className="flex gap-1.5 mb-1">
                 {(["volgorde","mix"] as const).map(o => (
-                  <button type="button" key={o} onClick={() => onSetTableOrder(o)}
+                  <button type="button" key={o} onPointerUp={() => onSetTableOrder(o)}
                     className={modeBtn(tableOrder === o, "tafel")}>
                     {o === "volgorde" ? "Op volgorde" : "Willekeurig"}
                   </button>
@@ -153,7 +153,7 @@ export default function GameScreen({
       <div className="flex flex-wrap justify-center gap-1.5 mb-2.5">
         <span className="text-xs text-gray-500 font-semibold self-center">Timer:</span>
         {TIMER_OPT.map(o => (
-          <button type="button" key={o.v} onClick={() => onSetTimer(o.v)}
+          <button type="button" key={o.v} onPointerUp={() => onSetTimer(o.v)}
             className={modeBtn(timerSetting === o.v, "timer")}>{o.l}</button>
         ))}
       </div>
@@ -188,7 +188,7 @@ export default function GameScreen({
         {choices.map(c => {
           const isC = c === correct, isSel = c === selected;
           return (
-            <button type="button" key={c} onClick={() => onAnswer(c)} disabled={answered}
+            <button type="button" key={c} onPointerUp={() => onAnswer(c)} disabled={answered}
               className={`py-3.5 px-2 rounded-2xl border-[3px] text-[28px] font-extrabold transition-colors flex items-center justify-center gap-1.5 disabled:cursor-default ${choiceClass(answered, isC, isSel)}`}>
               {answered && isC && <Numberling value={c} />}
               {c}
@@ -210,11 +210,11 @@ export default function GameScreen({
       {/* Next / stop */}
       {answered && (
         <div className="flex gap-2.5 justify-center flex-wrap mt-1">
-          <button type="button" onClick={onNext}
+          <button type="button" onPointerUp={onNext}
             className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md">
             Volgende →
           </button>
-          <button type="button" onClick={onStop}
+          <button type="button" onPointerUp={onStop}
             className="py-3 px-6 rounded-full bg-brand-yellow border-none text-gray-800 text-[15px] font-bold cursor-pointer">
             Stop & Score 🏁
           </button>

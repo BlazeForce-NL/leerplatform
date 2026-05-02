@@ -155,7 +155,7 @@ export default function NumberblocksGame() {
     <div className={`${WRAP} p-4`}>
       <Scoreboard allScores={allScores} onClose={() => setScreen("game")} />
       <div className="text-center mt-5">
-        <button type="button" onClick={() => { resetGame(); setScreen("name"); }}
+        <button type="button" onPointerUp={() => { resetGame(); setScreen("name"); }}
           className="py-3 px-7 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer">
           Nieuw spel
         </button>

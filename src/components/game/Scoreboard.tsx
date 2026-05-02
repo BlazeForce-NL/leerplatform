@@ -62,7 +62,7 @@ export default function Scoreboard({ allScores, onClose }: Props) {
         <div className="flex justify-between items-center mb-3.5">
           <div id={HEADING_ID} className="text-xl font-bold">🏆 Highscores</div>
           <button type="button"
-            onClick={onClose}
+            onPointerUp={onClose}
             className="border-none bg-transparent text-[22px] cursor-pointer text-gray-400 hover:text-gray-700 min-h-touch min-w-[44px]"
             aria-label="Scorebord sluiten"
           >✕</button>
@@ -78,7 +78,7 @@ export default function Scoreboard({ allScores, onClose }: Props) {
               {cats.map(c => (
                 <button type="button"
                   key={c}
-                  onClick={() => setCat(c)}
+                  onPointerUp={() => setCat(c)}
                   aria-pressed={cat === c ? "true" : "false"}
                   className={`px-3 py-1 min-h-touch rounded-2xl border-2 font-semibold text-xs cursor-pointer transition-colors ${
                     cat === c

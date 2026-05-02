@@ -90,27 +90,19 @@ Platform
 **zodat** nieuwe features snel en betrouwbaar beschikbaar komen.
 
 **Acceptatiecriteria:**
-- [ ] Platform draait op Vercel (of vergelijkbaar) met automatische preview-deployments per PR
-- [ ] Database op managed Postgres (bijv. Supabase, Neon, of Railway)
+
+- [x] Platform draait op Vercel met automatische deployments bij push naar main
+- [x] Database op managed Postgres — Neon EU (Frankfurt)
 - [x] Environment variables beheerd via hosting-dashboard (niet in repo)
 - [x] GitHub Actions CI: lint → test → build → deploy
 - [ ] Rollback mogelijk binnen 5 minuten via hosting-dashboard
 
 **Openstaande acties:**
 
-- [ ] **Jij:** Maak een GitHub-repo aan op github.com/new en push:
-
-  ```bash
-  git remote add origin https://github.com/<jouw-gebruikersnaam>/leerplatform.git
-  git push -u origin main
-  ```
-
-- [ ] **Jij:** Koppel het project aan Vercel via [vercel.com](https://vercel.com) → "Import Git Repository"
-- [ ] **Jij:** Zet `DATABASE_URL` als environment variable in het Vercel-dashboard
-- [ ] **Jij:** Voeg GitHub Secrets toe voor de CI deploy-job:
-  - `VERCEL_TOKEN` — via [vercel.com/account/tokens](https://vercel.com/account/tokens)
-  - `VERCEL_ORG_ID` — via `vercel link` in de terminal → `.vercel/project.json`
-  - `VERCEL_PROJECT_ID` — zelfde bestand
+- [x] ~~GitHub-repo aanmaken en pushen~~ → github.com/BlazeForce-NL/leerplatform
+- [x] ~~Vercel koppelen~~ → blazeforce-nls-projects/leerplatform live
+- [x] ~~DATABASE_URL in Vercel-dashboard~~ → ingesteld
+- [x] ~~GitHub Secrets toevoegen~~ → VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
 
 **Prioriteit:** Must  
 **Effort:** M  

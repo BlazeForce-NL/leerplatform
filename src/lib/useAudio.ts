@@ -5,19 +5,27 @@ import { useRef } from "react";
 export function useAudio() {
   const ctx = useRef<AudioContext | null>(null);
 
-  function get(): AudioContext {
-    if (!ctx.current) {
-      const Ctor =
-        window.AudioContext ??
-        (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      ctx.current = new Ctor!();
+  function get(): AudioContext | null {
+    try {
+      if (!ctx.current) {
+        const Ctor =
+          window.AudioContext ??
+          (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!Ctor) return null;
+        ctx.current = new Ctor();
+      }
+      // iOS Safari suspends AudioContext until a user gesture resumes it.
+      if (ctx.current.state === "suspended") ctx.current.resume();
+      return ctx.current;
+    } catch {
+      return null;
     }
-    return ctx.current;
   }
 
   function tone(freq: number, type: OscillatorType, dur: number, vol = 0.26, delay = 0) {
     try {
       const ac = get();
+      if (!ac) return;
       const o = ac.createOscillator();
       const g = ac.createGain();
       o.connect(g);

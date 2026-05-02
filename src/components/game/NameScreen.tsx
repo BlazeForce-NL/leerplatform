@@ -20,7 +20,6 @@ export default function NameScreen({ onStart }: { onStart: (name: string) => voi
         maxLength={20}
         aria-label="Jouw naam"
         className="text-xl py-2.5 px-4 rounded-2xl border-2 border-gray-300 w-full max-w-[280px] text-center mb-3 block mx-auto focus-visible:border-brand-blue transition-colors outline-none"
-        autoFocus
       />
       <div className="flex gap-2.5 justify-center flex-wrap mt-1">
         <button

@@ -15,10 +15,7 @@
 }
 
 html, body {
-  /* Prevent Chrome on iOS/iPadOS from treating taps as scroll-intent */
   overscroll-behavior: none;
-  /* Use dynamic viewport height so content never overflows the Chrome address bar */
-  height: 100%;
 }
 
 body {

@@ -141,7 +141,7 @@ export default function NumberblocksGame() {
 
   function resetGame() { setScore(0); setStreak(0); setCorrectCount(0); setTotalCount(0); setTableIdx(0); }
 
-  if (!mounted) return <div className={WRAP} />;
+  if (!mounted) return null;
 
   if (screen === "name") return (
     <div className={WRAP}><NameScreen onStart={startGame} /></div>

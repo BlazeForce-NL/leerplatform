@@ -16,12 +16,9 @@ import GameScreen from "./game/GameScreen";
 
 type Screen = "name" | "game" | "summary" | "board";
 
-const WRAP = "min-h-screen bg-game-bg font-sans";
+const WRAP = "min-h-dvh bg-game-bg font-sans";
 
 export default function NumberblocksGame() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-
   const [screen,        setScreen]        = useState<Screen>("name");
   const [player,        setPlayer]        = useState(ANON);
   const [mode,          setMode]          = useState<Mode>("plus");
@@ -140,8 +137,6 @@ export default function NumberblocksGame() {
   }
 
   function resetGame() { setScore(0); setStreak(0); setCorrectCount(0); setTotalCount(0); setTableIdx(0); }
-
-  if (!mounted) return null;
 
   if (screen === "name") return (
     <div className={WRAP}><NameScreen onStart={startGame} /></div>

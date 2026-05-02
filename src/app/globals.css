@@ -20,6 +20,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Prevent iOS 300ms tap delay and double-tap zoom on interactive elements */
+button, input, select, textarea, a {
+  touch-action: manipulation;
+}
+
 /* WCAG AA — zichtbare focus-indicator voor toetsenbord-navigatie */
 *:focus-visible {
   outline: 3px solid #4488FF;

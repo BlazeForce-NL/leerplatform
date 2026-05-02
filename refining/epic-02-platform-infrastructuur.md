@@ -25,10 +25,10 @@ Platform
 ```
 
 **Acceptatiecriteria:**
-- [ ] ERD gedocumenteerd in `docs/datamodel.md`
-- [ ] Entiteiten: `users`, `schools`, `classes`, `class_memberships`, `sessions`, `scores`
-- [ ] Multi-tenant: elke school heeft eigen geïsoleerde data
-- [ ] Softdelete voor gebruikers en klassen (AVG-compliance)
+- [x] ERD gedocumenteerd in `docs/datamodel.md`
+- [x] Entiteiten: `users`, `schools`, `classes`, `class_memberships`, `sessions`, `scores`
+- [x] Multi-tenant: elke school heeft eigen geïsoleerde data
+- [x] Softdelete voor gebruikers en klassen (AVG-compliance)
 - [ ] Schema gereviewed door minimaal één andere developer
 
 **Prioriteit:** Must  
@@ -44,11 +44,11 @@ Platform
 **zodat** frontend en backend één deployable zijn en we geen extra server nodig hebben.
 
 **Acceptatiecriteria:**
-- [ ] Route Handlers in `src/app/api/` voor alle kernacties
-- [ ] Zod gebruikt voor request-validatie op elke route
-- [ ] HTTP status codes consistent (200/201/400/401/403/404/500)
-- [ ] API-routes beveiligd: unauthenticated requests krijgen 401
-- [ ] Error-responses volgen consistent formaat `{ error: string, code: string }`
+- [x] Route Handlers in `src/app/api/` voor alle kernacties
+- [x] Zod gebruikt voor request-validatie op elke route
+- [x] HTTP status codes consistent (200/201/400/401/403/404/500)
+- [x] API-routes beveiligd: unauthenticated requests krijgen 401
+- [x] Error-responses volgen consistent formaat `{ error: string, code: string }`
 
 **Prioriteit:** Must  
 **Effort:** L  
@@ -63,11 +63,19 @@ Platform
 **zodat** queries veilig zijn en het schema als code beheerd wordt.
 
 **Acceptatiecriteria:**
-- [ ] Prisma opgezet als ORM
-- [ ] Schema in `prisma/schema.prisma` volledig in sync met US-02-01
-- [ ] Migrations werken via `prisma migrate dev` en `prisma migrate deploy`
-- [ ] Database credentials alleen via environment variables (nooit in code)
-- [ ] Seed-script voor lokale ontwikkeling (`prisma/seed.ts`)
+
+- [x] Prisma opgezet als ORM (`prisma/schema.prisma`)
+- [x] Schema in sync met US-02-01
+- [x] Migrations werken via `pnpm prisma migrate dev` en `pnpm prisma migrate deploy`
+- [x] Database credentials alleen via environment variables (nooit in code)
+- [x] Seed-script voor lokale ontwikkeling (`prisma/seed.ts`)
+
+**Openstaande acties:**
+
+- [x] ~~Maak een Postgres-database aan~~ → Neon EU (Frankfurt) opgezet
+- [x] ~~Zet `DATABASE_URL` in `.env.local`~~ → gedaan
+- [x] ~~Draai `pnpm prisma migrate dev --name init`~~ → migratie `20260502053406_init` toegepast
+- [x] ~~`pnpm prisma db seed`~~ → demo-data aangemaakt (Basisschool De Zon, Groep 4A)
 
 **Prioriteit:** Must  
 **Effort:** M  
@@ -84,9 +92,25 @@ Platform
 **Acceptatiecriteria:**
 - [ ] Platform draait op Vercel (of vergelijkbaar) met automatische preview-deployments per PR
 - [ ] Database op managed Postgres (bijv. Supabase, Neon, of Railway)
-- [ ] Environment variables beheerd via hosting-dashboard (niet in repo)
-- [ ] GitHub Actions CI: lint → test → build → deploy
+- [x] Environment variables beheerd via hosting-dashboard (niet in repo)
+- [x] GitHub Actions CI: lint → test → build → deploy
 - [ ] Rollback mogelijk binnen 5 minuten via hosting-dashboard
+
+**Openstaande acties:**
+
+- [ ] **Jij:** Maak een GitHub-repo aan op github.com/new en push:
+
+  ```bash
+  git remote add origin https://github.com/<jouw-gebruikersnaam>/leerplatform.git
+  git push -u origin main
+  ```
+
+- [ ] **Jij:** Koppel het project aan Vercel via [vercel.com](https://vercel.com) → "Import Git Repository"
+- [ ] **Jij:** Zet `DATABASE_URL` als environment variable in het Vercel-dashboard
+- [ ] **Jij:** Voeg GitHub Secrets toe voor de CI deploy-job:
+  - `VERCEL_TOKEN` — via [vercel.com/account/tokens](https://vercel.com/account/tokens)
+  - `VERCEL_ORG_ID` — via `vercel link` in de terminal → `.vercel/project.json`
+  - `VERCEL_PROJECT_ID` — zelfde bestand
 
 **Prioriteit:** Must  
 **Effort:** M  
@@ -103,9 +127,9 @@ Platform
 **Acceptatiecriteria:**
 - [ ] Geen persoonsgegevens verzameld zonder toestemming van ouder/voogd (of school als verwerkingsverantwoordelijke)
 - [ ] Data-verwerkingsovereenkomst (DPA) template beschikbaar voor scholen
-- [ ] Gebruikers kunnen hun data laten verwijderen (recht op vergetelheid)
-- [ ] Geen tracking-cookies of analytics van derden zonder expliciete toestemming
-- [ ] Data opgeslagen in EU (datacenters)
+- [x] Gebruikers kunnen hun data laten verwijderen (recht op vergetelheid via `DELETE /api/users/:id`)
+- [x] Geen tracking-cookies of analytics van derden zonder expliciete toestemming
+- [ ] Data opgeslagen in EU (datacenters) — afhankelijk van keuze database-provider
 - [ ] Privacyverklaring beschikbaar op het platform
 
 **Prioriteit:** Must  

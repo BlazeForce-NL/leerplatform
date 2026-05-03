@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Mode, Q, ScoreEntry } from "@/lib/gameLogic";
 import { TIMER_OPT } from "@/lib/gameLogic";
 import NumberBlock from "./NumberBlock";
@@ -70,6 +70,23 @@ export default function GameScreen({
   onToggleTafelMenu, onSelectAllTables, onSelectSpecificTable, onSetTableOrder, onSetTimer,
 }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSettingsOpen, setMobileSettingsOpen] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!answered) { setCountdown(0); return; }
+    setCountdown(3);
+    countdownRef.current = setInterval(() => {
+      setCountdown(n => {
+        if (n <= 1) { clearInterval(countdownRef.current!); onNext(); return 0; }
+        return n - 1;
+      });
+    }, 1000);
+    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answered]);
+
   const correct  = question?.answer ?? 0;
   const urgent   = timerSetting > 0 && timeLeft <= 5 && timeLeft > 0;
   const ansScale = correct <= 9 ? 1.5 : correct <= 19 ? 1.0 : 0.8;
@@ -137,56 +154,40 @@ export default function GameScreen({
           <span className="ml-1.5 text-xs text-gray-500" aria-hidden="true">{correctCount}/{totalCount}</span>
         </div>
 
-        {/* Settings — mobile only */}
-        <div className="md:hidden">
-          <div role="group" aria-label="Oefenmodus kiezen" className="flex flex-wrap justify-center gap-1.5 mb-1.5">
-            {([["plus","Optellen"],["min","Aftrekken"],["mix","+ en −"],["alles","Alles mix"]] as [Mode,string][]).map(([m,l]) => (
-              <button type="button" key={m} onPointerUp={() => onChangeMode(m)}
-                aria-pressed={mode === m} className={modeBtn(mode === m, m)}>{l}</button>
-            ))}
-            <button type="button" onPointerUp={onToggleTafelMenu}
-              aria-pressed={mode === "tafel" || mode === "tafel_specific"}
-              aria-expanded={showTafelMenu}
-              className={modeBtn(mode === "tafel" || mode === "tafel_specific", "tafel")}>
-              Tafels <span aria-hidden="true">{showTafelMenu ? "▲" : "▼"}</span>
-            </button>
-          </div>
-          {showTafelMenu && (
-            <div className="bg-white rounded-2xl p-3 max-w-[460px] mx-auto mb-2 shadow-sm">
-              <div className="text-xs font-semibold text-gray-500 mb-1.5">Welke tafel?</div>
-              <div className="flex flex-wrap gap-1 mb-2">
-                <button type="button" onPointerUp={onSelectAllTables}
-                  className={modeBtn(mode === "tafel", "tafel")}>Alle willekeurig</button>
-                {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-                  <button type="button" key={n} onPointerUp={() => onSelectSpecificTable(n)}
-                    className={modeBtn(mode === "tafel_specific" && specificTable === n, "tafel")}>×{n}</button>
-                ))}
+        {/* Settings — mobile only, collapsible */}
+        <div className="md:hidden mb-2">
+          <button type="button" onPointerUp={() => setMobileSettingsOpen(v => !v)}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-2xl border border-gray-200 bg-white text-xs font-semibold text-gray-500 cursor-pointer">
+            <span>⚙ Instellingen</span>
+            <span>{mobileSettingsOpen ? "▲" : "▼"}</span>
+          </button>
+          {mobileSettingsOpen && (
+            <div className="mt-2 bg-white rounded-2xl p-3 shadow-sm flex flex-col gap-3">
+              <div>
+                <div className="text-xs font-semibold text-gray-400 mb-1.5">Modus</div>
+                <div role="group" aria-label="Oefenmodus kiezen" className="flex flex-wrap gap-1.5">
+                  {([["plus","Optellen"],["min","Aftrekken"],["mix","+ en −"],["alles","Alles mix"]] as [Mode,string][]).map(([m,l]) => (
+                    <button type="button" key={m} onPointerUp={() => onChangeMode(m)}
+                      className={modeBtn(mode === m, m)}>{l}</button>
+                  ))}
+                  <button type="button" onPointerUp={onToggleTafelMenu}
+                    className={modeBtn(mode === "tafel" || mode === "tafel_specific", "tafel")}>
+                    Tafels <span aria-hidden="true">{showTafelMenu ? "▲" : "▼"}</span>
+                  </button>
+                </div>
+                {tafelSubmenu("bg-gray-50")}
               </div>
-              {mode === "tafel_specific" && (
-                <>
-                  <div className="text-xs font-semibold text-gray-500 mb-1.5">Volgorde?</div>
-                  <div className="flex gap-1.5 mb-1">
-                    {(["volgorde","mix"] as const).map(o => (
-                      <button type="button" key={o} onPointerUp={() => onSetTableOrder(o)}
-                        className={modeBtn(tableOrder === o, "tafel")}>
-                        {o === "volgorde" ? "Op volgorde" : "Willekeurig"}
-                      </button>
-                    ))}
-                  </div>
-                  {tableOrder === "volgorde" && (
-                    <div className="text-[11px] text-gray-400">Volgende: {specificTable} × {tableIdx + 1}</div>
-                  )}
-                </>
-              )}
+              <div>
+                <div className="text-xs font-semibold text-gray-400 mb-1.5">Timer</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {TIMER_OPT.map(o => (
+                    <button type="button" key={o.v} onPointerUp={() => onSetTimer(o.v)}
+                      className={modeBtn(timerSetting === o.v, "timer")}>{o.l}</button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
-          <div className="flex flex-wrap justify-center gap-1.5 mb-2.5">
-            <span className="text-xs text-gray-500 font-semibold self-center">Timer:</span>
-            {TIMER_OPT.map(o => (
-              <button type="button" key={o.v} onPointerUp={() => onSetTimer(o.v)}
-                className={modeBtn(timerSetting === o.v, "timer")}>{o.l}</button>
-            ))}
-          </div>
         </div>
 
         {/* Question + Answer area (desktop: side by side) */}
@@ -235,8 +236,13 @@ export default function GameScreen({
             {answered && (
               <div className="flex justify-center mt-1 mb-2">
                 <button type="button" onPointerUp={onNext}
-                  className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md">
+                  className="relative py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md flex items-center gap-2">
                   Volgende →
+                  {countdown > 0 && (
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/25 text-sm font-extrabold tabular-nums">
+                      {countdown}
+                    </span>
+                  )}
                 </button>
               </div>
             )}

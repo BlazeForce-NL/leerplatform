@@ -234,16 +234,16 @@ export default function GameScreen({
 
             {/* Volgende button — below choices on all screen sizes */}
             {answered && (
-              <div className="flex flex-col items-center mt-1 mb-2 gap-1.5">
+              <div className="flex justify-center mt-1 mb-2">
                 <button type="button" onPointerUp={onNext}
-                  className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md">
+                  className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md flex items-center gap-2">
                   Volgende →
+                  {countdown > 0 && (
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">
+                      {countdown}
+                    </span>
+                  )}
                 </button>
-                {countdown > 0 && (
-                  <span className="text-xs text-gray-400 tabular-nums">
-                    Gaat automatisch verder in {countdown}s
-                  </span>
-                )}
               </div>
             )}
 

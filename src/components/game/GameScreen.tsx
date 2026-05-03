@@ -231,42 +231,34 @@ export default function GameScreen({
               })}
             </div>
 
-            {/* Mobile: answer reveal + volgende */}
+            {/* Volgende button — below choices on all screen sizes */}
             {answered && (
-              <div className="md:hidden">
-                {correct >= 1 && correct <= 99 && (
-                  <div className="text-center mb-2.5">
-                    <div className="text-xs text-gray-500 mb-2">Antwoord:</div>
-                    <div className="inline-flex items-end justify-center">
-                      <NumberBlock value={correct} scale={ansScale} />
-                    </div>
-                  </div>
-                )}
-                <div className="flex justify-center mt-1 mb-2">
-                  <button type="button" onPointerUp={onNext}
-                    className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md">
-                    Volgende →
-                  </button>
+              <div className="flex justify-center mt-1 mb-2">
+                <button type="button" onPointerUp={onNext}
+                  className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md">
+                  Volgende →
+                </button>
+              </div>
+            )}
+
+            {/* Mobile: answer reveal */}
+            {answered && correct >= 1 && correct <= 99 && (
+              <div className="md:hidden text-center mb-2.5">
+                <div className="text-xs text-gray-500 mb-2">Antwoord:</div>
+                <div className="inline-flex items-end justify-center">
+                  <NumberBlock value={correct} scale={ansScale} />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Desktop: answer reveal + volgende (right of question) */}
-          {answered && (
+          {/* Desktop: answer reveal (right of question, no Volgende here) */}
+          {answered && correct >= 1 && correct <= 99 && (
             <div className="hidden md:flex md:flex-col md:items-center md:gap-4 md:pt-2 md:w-52 md:flex-none">
-              {correct >= 1 && correct <= 99 && (
-                <>
-                  <div className="text-xs text-gray-500 font-semibold">Antwoord:</div>
-                  <div className="flex items-end justify-center">
-                    <NumberBlock value={correct} scale={ansScale} />
-                  </div>
-                </>
-              )}
-              <button type="button" onPointerUp={onNext}
-                className="py-3 px-6 rounded-full bg-brand-blue border-none text-white text-[17px] font-bold cursor-pointer shadow-md w-full text-center">
-                Volgende →
-              </button>
+              <div className="text-xs text-gray-500 font-semibold">Antwoord:</div>
+              <div className="flex items-end justify-center">
+                <NumberBlock value={correct} scale={ansScale} />
+              </div>
             </div>
           )}
         </div>

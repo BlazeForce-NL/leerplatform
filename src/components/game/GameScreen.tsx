@@ -132,6 +132,12 @@ export default function GameScreen({
       {/* Main content */}
       <div className="flex-1 px-2 py-3 md:px-4 md:overflow-y-auto">
 
+        {/* Gast-banner (US-03-01) */}
+        <div className="md:hidden mb-2 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-center justify-between gap-2">
+          <span>Je speelt als gast — scores worden lokaal opgeslagen.</span>
+          <a href="/login" className="font-semibold underline whitespace-nowrap">Account →</a>
+        </div>
+
         {/* Header */}
         <div className="flex justify-between items-center mb-2">
           <div className="text-sm text-gray-500 font-semibold" aria-hidden="true">👤 {player}</div>

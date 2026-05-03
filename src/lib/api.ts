@@ -18,10 +18,10 @@ export function serverError(e: unknown): Response {
 export type AuthUser = { id: string; role: Role };
 
 export async function requireAuth(req: NextRequest): Promise<AuthUser | Response> {
-  const auth = req.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) return apiError(401, "Niet geauthenticeerd", "UNAUTHENTICATED");
-
-  const token = auth.slice(7);
+  const token =
+    req.cookies.get("session")?.value ??
+    req.headers.get("authorization")?.replace(/^Bearer /, "");
+  if (!token) return apiError(401, "Niet geauthenticeerd", "UNAUTHENTICATED");
   const record = await db.authToken.findFirst({
     where: { token, expiresAt: { gt: new Date() } },
     include: { user: { select: { id: true, role: true, deletedAt: true } } },

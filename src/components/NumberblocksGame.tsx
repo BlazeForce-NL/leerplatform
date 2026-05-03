@@ -47,21 +47,23 @@ export default function NumberblocksGame() {
   const [isNewHigh,     setIsNewHigh]     = useState(false);
   const [showBoard,     setShowBoard]     = useState(false);
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastTick = useRef(0);
-  const tIdxRef  = useRef(0);
+  const timerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastTick  = useRef(0);
+  const tIdxRef   = useRef(0);
+  const maxValRef = useRef(100);
   const audio = useAudio();
 
   useEffect(() => { tIdxRef.current = tableIdx; }, [tableIdx]);
+  useEffect(() => { maxValRef.current = maxVal; }, [maxVal]);
 
-  const newQ = useCallback((m: Mode, st: number, to: "volgorde" | "mix", tIdx: number, timer: number, mv: number = maxVal) => {
-    const { q, nextIdx } = makeQ(m, st, to, tIdx, mv);
+  const newQ = useCallback((m: Mode, st: number, to: "volgorde" | "mix", tIdx: number, timer: number, mv?: number) => {
+    const effective = mv ?? maxValRef.current;
+    const { q, nextIdx } = makeQ(m, st, to, tIdx, effective);
     setQuestion(q);
-    setChoices(makeChoices(q.answer, q.op, mv));
+    setChoices(makeChoices(q.answer, q.op, effective));
     setSelected(null); setAnswered(false); setFeedback("");
     setConfetti(false); setTimeUp(false); setTableIdx(nextIdx);
     if (timer > 0) setTimeLeft(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function startGame(name: string) {

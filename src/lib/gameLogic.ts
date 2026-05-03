@@ -29,6 +29,13 @@ export const TIMER_OPT = [
   { l: "10s",  v: 10 },
 ];
 
+export const MAX_OPTS = [
+  { l: "t/m 100",  v: 100  },
+  { l: "t/m 200",  v: 200  },
+  { l: "t/m 500",  v: 500  },
+  { l: "t/m 1000", v: 1000 },
+];
+
 export const CAT_LABELS: Record<string, string> = {
   plus:  "Optellen",
   min:   "Aftrekken",
@@ -45,17 +52,22 @@ export function ri(a: number, b: number): number {
 }
 
 export function catLabel(k: string): string {
-  const parts = k.split("_t");
+  const mMatch = k.match(/_m(\d+)$/);
+  const maxVal = mMatch ? parseInt(mMatch[1]) : 100;
+  const base = mMatch ? k.slice(0, -mMatch[0].length) : k;
+  const parts = base.split("_t");
   const timer = parts[1] ?? "0";
   const mk = parts[0];
   let name = CAT_LABELS[mk] ?? mk;
   if (mk.startsWith("tafel_")) name = `Tafel van ${mk.split("_")[1]}`;
-  return name + (timer !== "0" ? ` (${timer}s)` : "");
+  const maxLabel = maxVal !== 100 ? ` t/m ${maxVal}` : "";
+  return name + maxLabel + (timer !== "0" ? ` (${timer}s)` : "");
 }
 
-export function scoreCat(mode: Mode, st: number, timer: number): string {
+export function scoreCat(mode: Mode, st: number, timer: number, maxVal: number = 100): string {
   const m = mode === "tafel_specific" ? `tafel_${st}` : mode;
-  return `${m}_t${timer}`;
+  const mSuffix = maxVal !== 100 ? `_m${maxVal}` : "";
+  return `${m}_t${timer}${mSuffix}`;
 }
 
 export function makeQ(
@@ -63,6 +75,7 @@ export function makeQ(
   st: number,
   to: "volgorde" | "mix",
   tIdx: number,
+  maxVal: number = 100,
 ): { q: Q; nextIdx: number } {
   let which = mode as string;
   if (mode === "alles")                                   which = ["plus", "min", "tafel"][ri(0, 2)];
@@ -82,11 +95,11 @@ export function makeQ(
   }
 
   if (which === "plus") {
-    const a = ri(1, 99), b = ri(1, 100 - a);
+    const a = ri(1, maxVal - 1), b = ri(1, maxVal - a);
     return { q: { label: `${a} + ${b} = ?`, answer: a + b, a, b, op: "+" }, nextIdx: tIdx };
   }
 
-  const a = ri(2, 100), b = ri(1, a);
+  const a = ri(2, maxVal), b = ri(1, a);
   return { q: { label: `${a} − ${b} = ?`, answer: a - b, a, b, op: "−" }, nextIdx: tIdx };
 }
 
@@ -102,14 +115,13 @@ export function calcScore(currentScore: number, currentStreak: number): ScoreRes
   return { score: currentScore + (isCombo ? 2 : 1), newStreak, isCombo };
 }
 
-export function makeChoices(correct: number, op: string): number[] {
+export function makeChoices(correct: number, op: string, maxVal: number = 100): number[] {
+  const spread = op === "×" ? 5 : Math.max(15, Math.round(maxVal * 0.1));
   const s = new Set<number>([correct]);
   let att = 0;
   while (s.size < 4 && att < 300) {
     att++;
-    const d = op === "×"
-      ? ri(1, 5)  * (Math.random() < 0.5 ? 1 : -1)
-      : ri(1, 15) * (Math.random() < 0.5 ? 1 : -1);
+    const d = ri(1, spread) * (Math.random() < 0.5 ? 1 : -1);
     const v = correct + d;
     if (v >= 0) s.add(v);
   }

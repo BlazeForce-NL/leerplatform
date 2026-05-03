@@ -8,6 +8,7 @@ import {
   MSGS, ANON, STORAGE_KEY,
   makeQ, makeChoices, scoreCat, calcScore, ri,
 } from "@/lib/gameLogic";
+import { MAX_OPTS } from "@/lib/gameLogic";
 import Confetti from "./game/Confetti";
 import Scoreboard from "./game/Scoreboard";
 import SessionSummary from "./game/SessionSummary";
@@ -26,6 +27,7 @@ export default function NumberblocksGame() {
   const [tableOrder,    setTableOrder]    = useState<"volgorde" | "mix">("mix");
   const [tableIdx,      setTableIdx]      = useState(0);
   const [timerSetting,  setTimerSetting]  = useState(0);
+  const [maxVal,        setMaxVal]        = useState(100);
   const [question,      setQuestion]      = useState<Q | null>(null);
   const [choices,       setChoices]       = useState<number[]>([]);
   const [selected,      setSelected]      = useState<number | null>(null);
@@ -52,13 +54,14 @@ export default function NumberblocksGame() {
 
   useEffect(() => { tIdxRef.current = tableIdx; }, [tableIdx]);
 
-  const newQ = useCallback((m: Mode, st: number, to: "volgorde" | "mix", tIdx: number, timer: number) => {
-    const { q, nextIdx } = makeQ(m, st, to, tIdx);
+  const newQ = useCallback((m: Mode, st: number, to: "volgorde" | "mix", tIdx: number, timer: number, mv: number = maxVal) => {
+    const { q, nextIdx } = makeQ(m, st, to, tIdx, mv);
     setQuestion(q);
-    setChoices(makeChoices(q.answer, q.op));
+    setChoices(makeChoices(q.answer, q.op, mv));
     setSelected(null); setAnswered(false); setFeedback("");
     setConfetti(false); setTimeUp(false); setTableIdx(nextIdx);
     if (timer > 0) setTimeLeft(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function startGame(name: string) {
@@ -115,7 +118,7 @@ export default function NumberblocksGame() {
   }
 
   function endSession() {
-    const cat = scoreCat(mode, specificTable, timerSetting);
+    const cat = scoreCat(mode, specificTable, timerSetting, maxVal);
     const entry: ScoreEntry = { player, score, correct: correctCount, total: totalCount, date: new Date().toLocaleDateString("nl-NL") };
     const updated = { ...allScores };
     if (!updated[cat]) updated[cat] = [];
@@ -172,6 +175,7 @@ export default function NumberblocksGame() {
         score={score} streak={streak} correctCount={correctCount} totalCount={totalCount}
         confetti={confetti} feedback={feedback} timeLeft={timeLeft} timeUp={timeUp}
         showTafelMenu={showTafelMenu} allScores={allScores} showBoard={showBoard}
+        maxVal={maxVal}
         onOpenBoard={() => setShowBoard(true)}
         onCloseBoard={() => setShowBoard(false)}
         onStop={endSession}
@@ -183,6 +187,7 @@ export default function NumberblocksGame() {
         onSelectSpecificTable={n => { setMode("tafel_specific"); setSpecificTable(n); setTableIdx(0); newQ("tafel_specific", n, tableOrder, 0, timerSetting); }}
         onSetTableOrder={o => { setTableOrder(o); setTableIdx(0); newQ("tafel_specific", specificTable, o, 0, timerSetting); }}
         onSetTimer={v => { setTimerSetting(v); if (v > 0) setTimeLeft(v); }}
+        onSetMaxVal={v => { setMaxVal(v); newQ(mode, specificTable, tableOrder, tIdxRef.current, timerSetting, v); }}
       />
     </div>
   );

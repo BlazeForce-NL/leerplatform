@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Mode, Q, ScoreEntry } from "@/lib/gameLogic";
-import { TIMER_OPT } from "@/lib/gameLogic";
+import { MAX_OPTS, TIMER_OPT } from "@/lib/gameLogic";
 import NumberBlock from "./NumberBlock";
 import Numberling from "./Numberling";
 import Confetti from "./Confetti";
@@ -60,6 +60,8 @@ interface Props {
   onSelectSpecificTable: (n: number) => void;
   onSetTableOrder: (o: "volgorde" | "mix") => void;
   onSetTimer: (v: number) => void;
+  maxVal: number;
+  onSetMaxVal: (v: number) => void;
 }
 
 export default function GameScreen({
@@ -68,6 +70,7 @@ export default function GameScreen({
   confetti, feedback, timeLeft, timeUp, showTafelMenu, allScores, showBoard,
   onOpenBoard, onCloseBoard, onStop, onNext, onAnswer, onChangeMode,
   onToggleTafelMenu, onSelectAllTables, onSelectSpecificTable, onSetTableOrder, onSetTimer,
+  maxVal, onSetMaxVal,
 }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSettingsOpen, setMobileSettingsOpen] = useState(false);
@@ -186,6 +189,17 @@ export default function GameScreen({
                   ))}
                 </div>
               </div>
+              {(mode === "plus" || mode === "min" || mode === "mix" || mode === "alles") && (
+                <div>
+                  <div className="text-xs font-semibold text-gray-400 mb-1.5">Niveau</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {MAX_OPTS.map(o => (
+                      <button type="button" key={o.v} onPointerUp={() => onSetMaxVal(o.v)}
+                        className={modeBtn(maxVal === o.v, "plus")}>{o.l}</button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -311,6 +325,19 @@ export default function GameScreen({
                 ))}
               </div>
             </div>
+
+            {/* Niveau (alleen voor +/- modi) */}
+            {(mode === "plus" || mode === "min" || mode === "mix" || mode === "alles") && (
+              <div>
+                <div className="text-xs font-semibold text-gray-400 mb-2">Niveau</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {MAX_OPTS.map(o => (
+                    <button type="button" key={o.v} onPointerUp={() => onSetMaxVal(o.v)}
+                      className={modeBtn(maxVal === o.v, "plus")}>{o.l}</button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </aside>

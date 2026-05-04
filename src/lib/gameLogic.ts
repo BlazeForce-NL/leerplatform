@@ -76,6 +76,7 @@ export function makeQ(
   to: "volgorde" | "mix",
   tIdx: number,
   maxVal: number = 100,
+  allowedTables?: number[], // subset van tafels voor level-based play
 ): { q: Q; nextIdx: number } {
   let which = mode as string;
   if (mode === "alles")                                   which = ["plus", "min", "tafel"][ri(0, 2)];
@@ -84,7 +85,11 @@ export function makeQ(
 
   if (which === "tafel") {
     let a: number, b: number, ni = tIdx;
-    if (mode === "tafel_specific") {
+    if (allowedTables && allowedTables.length > 0) {
+      // Level-based: kies willekeurig uit de toegestane tafels
+      a = allowedTables[ri(0, allowedTables.length - 1)];
+      b = ri(1, 10);
+    } else if (mode === "tafel_specific") {
       a = st;
       if (to === "volgorde") { b = tIdx + 1; ni = (tIdx + 1) % 10; }
       else b = ri(1, 10);

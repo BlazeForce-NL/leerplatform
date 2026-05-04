@@ -62,6 +62,8 @@ interface Props {
   onSetTimer: (v: number) => void;
   maxVal: number;
   onSetMaxVal: (v: number) => void;
+  activeLevelId: string | null;
+  onGoToLevels: () => void;
 }
 
 export default function GameScreen({
@@ -70,7 +72,7 @@ export default function GameScreen({
   confetti, feedback, timeLeft, timeUp, showTafelMenu, allScores, showBoard,
   onOpenBoard, onCloseBoard, onStop, onNext, onAnswer, onChangeMode,
   onToggleTafelMenu, onSelectAllTables, onSelectSpecificTable, onSetTableOrder, onSetTimer,
-  maxVal, onSetMaxVal,
+  maxVal, onSetMaxVal, activeLevelId, onGoToLevels,
 }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSettingsOpen, setMobileSettingsOpen] = useState(false);
@@ -140,7 +142,11 @@ export default function GameScreen({
 
         {/* Header */}
         <div className="flex justify-between items-center mb-2">
-          <div className="text-sm text-gray-500 font-semibold" aria-hidden="true">👤 {player}</div>
+          <button type="button" onPointerUp={onGoToLevels}
+            className="px-2.5 py-1 min-h-touch rounded-2xl border-2 border-gray-300 bg-white text-gray-600 text-xs font-semibold cursor-pointer"
+            aria-label="Niveaukaart">
+            🗺️{activeLevelId ? " Kaart" : ""}
+          </button>
           <div className="text-lg font-bold text-gray-800" aria-label="Numberblocks Rekenspel">Numberblocks</div>
           <div className="flex gap-1.5">
             <button type="button" onPointerUp={onOpenBoard}

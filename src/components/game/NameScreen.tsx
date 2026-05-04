@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ANON } from "@/lib/gameLogic";
 
-export default function NameScreen({ onStart }: { onStart: (name: string) => void }) {
+export default function NameScreen({ onStart, onLevels }: { onStart: (name: string) => void; onLevels?: () => void }) {
   const [name, setName] = useState("");
   function go(n: string) { onStart(n.trim() || ANON); }
 
@@ -39,6 +39,16 @@ export default function NameScreen({ onStart }: { onStart: (name: string) => voi
           </button>
         </div>
       </form>
+
+      {onLevels && (
+        <button
+          type="button"
+          onPointerUp={onLevels}
+          className="mt-5 text-sm text-blue-600 underline cursor-pointer"
+        >
+          🗺️ Bekijk niveaukaart
+        </button>
+      )}
     </div>
   );
 }

@@ -1,195 +1,178 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useAudio } from "@/lib/useAudio";
-import { getStorageItem, setStorageItem } from "@/lib/storage";
-import {
-  Mode, Q, ScoreEntry,
-  MSGS, ANON, STORAGE_KEY,
-  makeQ, makeChoices, scoreCat, calcScore, ri,
-} from "@/lib/gameLogic";
+import { useEffect, useRef } from "react";
+import { useGameState } from "@/hooks/useGameState";
+import { SKILL_GRAPH, getLevelById } from "@/lib/skillGraph";
+import { createLocalMasteryStore } from "@/lib/mastery";
+import { getPlayerId } from "@/lib/playerId";
 import { MAX_OPTS } from "@/lib/gameLogic";
 import Confetti from "./game/Confetti";
 import Scoreboard from "./game/Scoreboard";
 import SessionSummary from "./game/SessionSummary";
 import NameScreen from "./game/NameScreen";
 import GameScreen from "./game/GameScreen";
-
-type Screen = "name" | "game" | "summary" | "board";
+import LevelMap from "./game/LevelMap";
 
 const WRAP = "min-h-dvh bg-game-bg font-sans";
 
 export default function NumberblocksGame() {
-  const [screen,        setScreen]        = useState<Screen>("name");
-  const [player,        setPlayer]        = useState(ANON);
-  const [mode,          setMode]          = useState<Mode>("plus");
-  const [specificTable, setSpecificTable] = useState(2);
-  const [tableOrder,    setTableOrder]    = useState<"volgorde" | "mix">("mix");
-  const [tableIdx,      setTableIdx]      = useState(0);
-  const [timerSetting,  setTimerSetting]  = useState(0);
-  const [maxVal,        setMaxVal]        = useState(100);
-  const [question,      setQuestion]      = useState<Q | null>(null);
-  const [choices,       setChoices]       = useState<number[]>([]);
-  const [selected,      setSelected]      = useState<number | null>(null);
-  const [answered,      setAnswered]      = useState(false);
-  const [score,         setScore]         = useState(0);
-  const [streak,        setStreak]        = useState(0);
-  const [correctCount,  setCorrectCount]  = useState(0);
-  const [totalCount,    setTotalCount]    = useState(0);
-  const [confetti,      setConfetti]      = useState(false);
-  const [feedback,      setFeedback]      = useState("");
-  const [timeLeft,      setTimeLeft]      = useState(0);
-  const [timeUp,        setTimeUp]        = useState(false);
-  const [showTafelMenu, setShowTafelMenu] = useState(false);
-  const [allScores,     setAllScores]     = useState<Record<string, ScoreEntry[]>>(
-    () => getStorageItem<Record<string, ScoreEntry[]>>(STORAGE_KEY, {}),
-  );
-  const [isNewHigh,     setIsNewHigh]     = useState(false);
-  const [showBoard,     setShowBoard]     = useState(false);
+  const game = useGameState();
+  const playerIdRef = useRef<string>("");
 
-  const timerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastTick  = useRef(0);
-  const tIdxRef   = useRef(0);
-  const maxValRef = useRef(100);
-  const audio = useAudio();
+  // Lazy-init playerId (client-only)
+  useEffect(() => { playerIdRef.current = getPlayerId(); }, []);
 
-  useEffect(() => { tIdxRef.current = tableIdx; }, [tableIdx]);
-  useEffect(() => { maxValRef.current = maxVal; }, [maxVal]);
+  // ── Progressie: level selecteren vanuit LevelMap ─────────────────────────
 
-  const newQ = useCallback((m: Mode, st: number, to: "volgorde" | "mix", tIdx: number, timer: number, mv?: number) => {
-    const effective = mv ?? maxValRef.current;
-    const { q, nextIdx } = makeQ(m, st, to, tIdx, effective);
-    setQuestion(q);
-    setChoices(makeChoices(q.answer, q.op, effective));
-    setSelected(null); setAnswered(false); setFeedback("");
-    setConfetti(false); setTimeUp(false); setTableIdx(nextIdx);
-    if (timer > 0) setTimeLeft(timer);
-  }, []);
-
-  function startGame(name: string) {
-    setPlayer(name);
-    setScore(0); setStreak(0); setCorrectCount(0); setTotalCount(0);
-    setScreen("game"); setTableIdx(0);
-    newQ(mode, specificTable, tableOrder, 0, timerSetting);
+  function startLevel(levelId: string) {
+    const level = getLevelById(SKILL_GRAPH, levelId);
+    if (!level) return;
+    const { mode, maxVal, timerSetting, allowedTables, specificTable, tableOrder } = level.content_config;
+    game.setActiveLevelId(levelId);
+    game.setMode(mode);
+    game.setMaxVal(maxVal);
+    game.setTimerSetting(timerSetting);
+    if (timerSetting > 0) game.setTimeLeft(timerSetting);
+    game.setScreen("game");
+    game.newQ(mode, specificTable ?? 1, tableOrder ?? "mix", 0, timerSetting, maxVal, allowedTables);
   }
 
+  // ── Progressie: antwoord opslaan in mastery tracker ─────────────────────
+
+  const prevAnswered = useRef(false);
   useEffect(() => {
-    if (screen !== "game" || timerSetting === 0 || answered) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      return;
+    if (!game.answered || prevAnswered.current) return;
+    prevAnswered.current = true;
+
+    if (!game.activeLevelId || !playerIdRef.current) return;
+    const store = createLocalMasteryStore(playerIdRef.current);
+    const isCorrect = game.selected === (game.question?.answer ?? -1);
+    const record = store.recordAnswer(game.activeLevelId, isCorrect);
+
+    // Level beheerst → terug naar kaart na 2s
+    if (record.mastered) {
+      setTimeout(() => game.setScreen("levels"), 2000);
     }
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTimeLeft(t => {
-        const next = t - 1;
-        const now = Date.now();
-        if (now - lastTick.current > 850) {
-          lastTick.current = now;
-          if (next <= 5 && next > 0) audio.urgentTick();
-          else if (next <= timerSetting * 0.4) audio.tick();
-        }
-        if (next <= 0) {
-          clearInterval(timerRef.current!);
-          audio.timeUp();
-          setAnswered(true); setTimeUp(true);
-          setFeedback("Tijd is op! Het groene antwoord is goed.");
-          setStreak(0); setTotalCount(c => c + 1);
-          return 0;
-        }
-        return next;
-      });
-    }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [question, timerSetting, answered, screen, audio]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game.answered]);
 
-  function handleAnswer(val: number) {
-    if (answered || !question) return;
-    if (timerRef.current) clearInterval(timerRef.current);
-    setAnswered(true); setSelected(val); setTotalCount(c => c + 1);
-    if (val === question.answer) {
-      const { score: newScore, newStreak, isCombo } = calcScore(score, streak);
-      setScore(newScore); setStreak(newStreak);
-      setCorrectCount(c => c + 1);
-      setFeedback(MSGS[ri(0, MSGS.length - 1)] + (isCombo ? " Combo! +2 ⭐" : " +1 ⭐"));
-      if (newStreak % 3 === 0) { setConfetti(true); audio.fanfare(); setTimeout(() => setConfetti(false), 3500); }
-      else audio.correct();
-    } else {
-      setStreak(0); audio.wrong();
-      setFeedback("Bijna! Het groene antwoord is goed.");
-    }
-  }
+  // Reset prevAnswered wanneer een nieuwe vraag start
+  useEffect(() => {
+    if (!game.answered) prevAnswered.current = false;
+  }, [game.answered]);
 
-  function endSession() {
-    const cat = scoreCat(mode, specificTable, timerSetting, maxVal);
-    const entry: ScoreEntry = { player, score, correct: correctCount, total: totalCount, date: new Date().toLocaleDateString("nl-NL") };
-    const updated = { ...allScores };
-    if (!updated[cat]) updated[cat] = [];
-    const myBest = updated[cat].filter(e => e.player === player).sort((a, b) => b.score - a.score)[0];
-    const newH = !myBest || score > myBest.score;
-    setIsNewHigh(newH);
-    if (newH) audio.newHigh();
-    updated[cat] = [...updated[cat], entry].sort((a, b) => b.score - a.score).slice(0, 50);
-    setAllScores(updated);
-    setStorageItem(STORAGE_KEY, updated);
-    setScreen("summary");
-  }
+  // ── Schermrouting ─────────────────────────────────────────────────────────
 
-  function handleNext() { newQ(mode, specificTable, tableOrder, tIdxRef.current, timerSetting); }
-
-  function changeMode(m: Mode) {
-    setMode(m); setShowTafelMenu(false); setTableIdx(0);
-    newQ(m, specificTable, tableOrder, 0, timerSetting);
-  }
-
-  function resetGame() { setScore(0); setStreak(0); setCorrectCount(0); setTotalCount(0); setTableIdx(0); }
-
-  if (screen === "name") return (
-    <div className={WRAP}><NameScreen onStart={startGame} /></div>
-  );
-
-  if (screen === "summary") return (
-    <div className={`${WRAP} p-4`}>
-      <Confetti active={isNewHigh} />
-      <SessionSummary player={player} score={score} correct={correctCount} total={totalCount} isNewHigh={isNewHigh}
-        onPlay={() => { resetGame(); setScreen("game"); newQ(mode, specificTable, tableOrder, 0, timerSetting); }}
-        onBoard={() => setScreen("board")} />
+  if (game.screen === "name") return (
+    <div className={WRAP}>
+      <NameScreen onStart={game.startGame} onLevels={() => game.setScreen("levels")} />
     </div>
   );
 
-  if (screen === "board") return (
+  if (game.screen === "levels") return (
+    <LevelMap
+      onSelectLevel={startLevel}
+      onVrijSpelen={() => {
+        game.setActiveLevelId(null);
+        game.setScreen("game");
+        game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting);
+      }}
+    />
+  );
+
+  if (game.screen === "summary") return (
     <div className={`${WRAP} p-4`}>
-      <Scoreboard allScores={allScores} onClose={() => setScreen("game")} />
-      <div className="text-center mt-5">
-        <button type="button" onPointerUp={() => { resetGame(); setScreen("name"); }}
-          className="py-3 px-7 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer">
+      <Confetti active={game.isNewHigh} />
+      <SessionSummary
+        player={game.player} score={game.score}
+        correct={game.correctCount} total={game.totalCount} isNewHigh={game.isNewHigh}
+        onPlay={() => {
+          game.resetGame();
+          if (game.activeLevelId) {
+            startLevel(game.activeLevelId);
+          } else {
+            game.setScreen("game");
+            game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting);
+          }
+        }}
+        onBoard={() => game.setScreen("board")}
+      />
+      {game.activeLevelId && (
+        <div className="text-center mt-3">
+          <button
+            type="button"
+            onPointerUp={() => game.setScreen("levels")}
+            className="text-sm text-blue-600 underline cursor-pointer"
+          >
+            ← Terug naar niveaukaart
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  if (game.screen === "board") return (
+    <div className={`${WRAP} p-4`}>
+      <Scoreboard allScores={game.allScores} onClose={() => game.setScreen("game")} />
+      <div className="text-center mt-5 flex flex-col gap-3 items-center">
+        <button
+          type="button"
+          onPointerUp={() => game.setScreen("levels")}
+          className="py-2.5 px-7 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer"
+        >
+          Niveaukaart
+        </button>
+        <button
+          type="button"
+          onPointerUp={() => { game.resetGame(); game.setScreen("name"); }}
+          className="text-sm text-gray-500 underline cursor-pointer"
+        >
           Nieuw spel
         </button>
       </div>
     </div>
   );
 
+  // Game scherm
   return (
     <div className={WRAP}>
       <GameScreen
-        player={player} mode={mode} specificTable={specificTable}
-        tableOrder={tableOrder} tableIdx={tableIdx} timerSetting={timerSetting}
-        question={question} choices={choices} selected={selected} answered={answered}
-        score={score} streak={streak} correctCount={correctCount} totalCount={totalCount}
-        confetti={confetti} feedback={feedback} timeLeft={timeLeft} timeUp={timeUp}
-        showTafelMenu={showTafelMenu} allScores={allScores} showBoard={showBoard}
-        maxVal={maxVal}
-        onOpenBoard={() => setShowBoard(true)}
-        onCloseBoard={() => setShowBoard(false)}
-        onStop={endSession}
-        onNext={handleNext}
-        onAnswer={handleAnswer}
-        onChangeMode={changeMode}
-        onToggleTafelMenu={() => setShowTafelMenu(v => !v)}
-        onSelectAllTables={() => { setMode("tafel"); setTableIdx(0); newQ("tafel", specificTable, tableOrder, 0, timerSetting); setShowTafelMenu(false); }}
-        onSelectSpecificTable={n => { setMode("tafel_specific"); setSpecificTable(n); setTableIdx(0); newQ("tafel_specific", n, tableOrder, 0, timerSetting); }}
-        onSetTableOrder={o => { setTableOrder(o); setTableIdx(0); newQ("tafel_specific", specificTable, o, 0, timerSetting); }}
-        onSetTimer={v => { setTimerSetting(v); if (v > 0) setTimeLeft(v); }}
-        onSetMaxVal={v => { setMaxVal(v); newQ(mode, specificTable, tableOrder, tIdxRef.current, timerSetting, v); }}
+        player={game.player} mode={game.mode} specificTable={game.specificTable}
+        tableOrder={game.tableOrder} tableIdx={game.tableIdx} timerSetting={game.timerSetting}
+        question={game.question} choices={game.choices} selected={game.selected}
+        answered={game.answered} score={game.score} streak={game.streak}
+        correctCount={game.correctCount} totalCount={game.totalCount}
+        confetti={game.confetti} feedback={game.feedback}
+        timeLeft={game.timeLeft} timeUp={game.timeUp}
+        showTafelMenu={game.showTafelMenu} allScores={game.allScores}
+        showBoard={game.showBoard} maxVal={game.maxVal}
+        activeLevelId={game.activeLevelId}
+        onOpenBoard={() => game.setShowBoard(true)}
+        onCloseBoard={() => game.setShowBoard(false)}
+        onStop={game.endSession}
+        onNext={game.handleNext}
+        onAnswer={game.handleAnswer}
+        onChangeMode={game.changeMode}
+        onToggleTafelMenu={() => game.setShowTafelMenu(v => !v)}
+        onSelectAllTables={() => {
+          game.setMode("tafel"); game.setActiveLevelId(null);
+          game.newQ("tafel", game.specificTable, game.tableOrder, 0, game.timerSetting);
+          game.setShowTafelMenu(false);
+        }}
+        onSelectSpecificTable={n => {
+          game.setMode("tafel_specific"); game.setSpecificTable(n); game.setActiveLevelId(null);
+          game.newQ("tafel_specific", n, game.tableOrder, 0, game.timerSetting);
+        }}
+        onSetTableOrder={o => {
+          game.setTableOrder(o);
+          game.newQ("tafel_specific", game.specificTable, o, 0, game.timerSetting);
+        }}
+        onSetTimer={v => { game.setTimerSetting(v); if (v > 0) game.setTimeLeft(v); }}
+        onSetMaxVal={v => {
+          game.setMaxVal(v); game.setActiveLevelId(null);
+          game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting, v);
+        }}
+        onGoToLevels={() => game.setScreen("levels")}
       />
     </div>
   );

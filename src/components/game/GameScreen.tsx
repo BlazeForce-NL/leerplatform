@@ -80,7 +80,8 @@ export default function GameScreen({
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!answered) { setCountdown(0); return; }
+    if (!answered) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCountdown(3);
     countdownRef.current = setInterval(() => {
       setCountdown(n => {
@@ -88,7 +89,10 @@ export default function GameScreen({
         return n - 1;
       });
     }, 1000);
-    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      setCountdown(0); // reset in cleanup zodat volgende vraag schoon begint
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answered]);
 
@@ -147,7 +151,7 @@ export default function GameScreen({
             aria-label="Niveaukaart">
             🗺️{activeLevelId ? " Kaart" : ""}
           </button>
-          <div className="text-lg font-bold text-gray-800" aria-label="Numberblocks Rekenspel">Numberblocks</div>
+          <div className="text-lg font-bold text-gray-800" aria-label={`Numberblocks Rekenspel — ${player}`}>Numberblocks</div>
           <div className="flex gap-1.5">
             <button type="button" onPointerUp={onOpenBoard}
               className="px-2.5 py-1 min-h-touch min-w-[44px] rounded-2xl border-2 border-gray-300 bg-white text-gray-600 text-xs font-semibold cursor-pointer"
@@ -245,12 +249,24 @@ export default function GameScreen({
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-2.5 max-w-[460px] mx-auto mb-3 md:max-w-none">
+            <div
+              role="group"
+              aria-label="Kies het juiste antwoord"
+              className="grid grid-cols-2 gap-2.5 max-w-[460px] mx-auto mb-3 md:max-w-none"
+            >
               {choices.map(c => {
                 const isC = c === correct, isSel = c === selected;
+                const label = answered
+                  ? isC ? `${c} — goed antwoord` : isSel ? `${c} — fout gekozen` : `${c}`
+                  : `Antwoord ${c}`;
                 return (
-                  <button type="button" key={c} onPointerUp={() => onAnswer(c)} disabled={answered}
-                    className={`py-3.5 px-2 rounded-2xl border-[3px] text-[28px] font-extrabold transition-colors flex items-center justify-center gap-1.5 disabled:cursor-default ${choiceClass(answered, isC, isSel)}`}>
+                  <button
+                    type="button" key={c}
+                    onPointerUp={() => onAnswer(c)}
+                    disabled={answered}
+                    aria-label={label}
+                    className={`py-3.5 px-2 rounded-2xl border-[3px] text-[28px] font-extrabold transition-colors flex items-center justify-center gap-1.5 disabled:cursor-default ${choiceClass(answered, isC, isSel)}`}
+                  >
                     {answered && isC && <Numberling value={c} />}
                     {c}
                   </button>

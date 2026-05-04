@@ -29,10 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="nl"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <a href="#main-content" className="skip-link">Ga naar inhoud</a>
+        <main id="main-content">{children}</main>
+      </body>
     </html>
   );
 }

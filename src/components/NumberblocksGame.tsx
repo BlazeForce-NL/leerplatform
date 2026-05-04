@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGameState } from "@/hooks/useGameState";
 import { SKILL_GRAPH, getLevelById } from "@/lib/skillGraph";
-import { createLocalMasteryStore } from "@/lib/mastery";
+import { createLocalMasteryStore, checkAndAwardBadges, type Badge } from "@/lib/mastery";
 import { getPlayerId } from "@/lib/playerId";
-import { MAX_OPTS } from "@/lib/gameLogic";
+
 import Confetti from "./game/Confetti";
 import Scoreboard from "./game/Scoreboard";
 import SessionSummary from "./game/SessionSummary";
 import NameScreen from "./game/NameScreen";
 import GameScreen from "./game/GameScreen";
 import LevelMap from "./game/LevelMap";
+import BadgeToast from "./game/BadgeToast";
 
 const WRAP = "min-h-dvh bg-game-bg font-sans";
 
 export default function NumberblocksGame() {
   const game = useGameState();
   const playerIdRef = useRef<string>("");
+  const [pendingBadges, setPendingBadges] = useState<Badge[]>([]);
 
   // Lazy-init playerId (client-only)
   useEffect(() => { playerIdRef.current = getPlayerId(); }, []);
@@ -48,6 +50,14 @@ export default function NumberblocksGame() {
     const store = createLocalMasteryStore(playerIdRef.current);
     const isCorrect = game.selected === (game.question?.answer ?? -1);
     const record = store.recordAnswer(game.activeLevelId, isCorrect);
+
+    // Badges checken
+    const newBadges = checkAndAwardBadges(
+      playerIdRef.current,
+      game.streak,
+      game.timerSetting > 0,
+    );
+    if (newBadges.length > 0) setPendingBadges(b => [...b, ...newBadges]);
 
     // Level beheerst → terug naar kaart na 2s
     if (record.mastered) {
@@ -136,6 +146,9 @@ export default function NumberblocksGame() {
   // Game scherm
   return (
     <div className={WRAP}>
+      {pendingBadges.length > 0 && (
+        <BadgeToast badges={pendingBadges} onDone={() => setPendingBadges([])} />
+      )}
       <GameScreen
         player={game.player} mode={game.mode} specificTable={game.specificTable}
         tableOrder={game.tableOrder} tableIdx={game.tableIdx} timerSetting={game.timerSetting}

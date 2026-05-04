@@ -99,12 +99,19 @@ export default function LoginPage({
         )}
       </div>
 
-      <p className="text-center mt-4 text-sm text-gray-500">
-        Leerling?{" "}
-        <Link href="/" className="text-blue-600 underline">
-          Direct spelen
-        </Link>
-      </p>
+      <div className="mt-4 flex flex-col items-center gap-1 text-sm text-gray-500">
+        <span>
+          Leerling?{" "}
+          <Link href="/login/leerling" className="text-blue-600 underline">Inloggen met klascode</Link>
+        </span>
+        <span>
+          Nog geen account?{" "}
+          <Link href="/registreer" className="text-blue-600 underline">School aanmelden</Link>
+        </span>
+        <span>
+          <Link href="/" className="text-gray-400 underline">Direct spelen zonder account</Link>
+        </span>
+      </div>
     </div>
   );
 }

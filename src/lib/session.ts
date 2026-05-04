@@ -2,10 +2,10 @@ import { cookies } from "next/headers";
 import { db } from "./db";
 
 const COOKIE = "session";
-const SESSION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dagen
+const DEFAULT_SESSION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dagen
 
-export async function createSession(userId: string): Promise<void> {
-  const expiresAt = new Date(Date.now() + SESSION_MS);
+export async function createSession(userId: string, durationMs = DEFAULT_SESSION_MS): Promise<void> {
+  const expiresAt = new Date(Date.now() + durationMs);
   const record = await db.authToken.create({
     data: { userId, expiresAt },
     select: { token: true },

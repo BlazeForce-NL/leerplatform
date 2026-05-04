@@ -54,10 +54,11 @@ async function main() {
   // Klas
   const klas = await db.class.upsert({
     where: { id: "seed-class-1" },
-    update: {},
+    update: { code: "GROEP4" },
     create: {
       id: "seed-class-1",
       name: "Groep 4A",
+      code: "GROEP4",
       schoolId: school.id,
     },
   });
@@ -67,17 +68,17 @@ async function main() {
     create: { classId: klas.id, userId: teacher.id },
   });
 
-  // Twee leerlingen
+  // Twee leerlingen (geen e-mail nodig voor leerlingen)
   const leerlingen = [
-    { email: "emma@dezon.nl", name: "Emma Jansen" },
-    { email: "noah@dezon.nl", name: "Noah Pieterse" },
+    { id: "seed-student-1", name: "Emma" },
+    { id: "seed-student-2", name: "Noah" },
   ];
 
   for (const l of leerlingen) {
     const leerling = await db.user.upsert({
-      where: { email: l.email },
+      where: { id: l.id },
       update: {},
-      create: { ...l, role: "STUDENT" },
+      create: { id: l.id, name: l.name, role: "STUDENT" },
     });
     await db.classMembership.upsert({
       where: { classId_userId: { classId: klas.id, userId: leerling.id } },

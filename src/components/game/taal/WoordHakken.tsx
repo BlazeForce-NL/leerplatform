@@ -6,11 +6,13 @@ import { speakWord, speakSegment } from "@/lib/tts";
 import { getWordsByDifficulty } from "@/content/nl/words";
 import { ri } from "@/lib/gameLogic";
 import type { TaalWord } from "@/lib/taalContent";
+import { useAutoAdvance } from "@/hooks/useAutoAdvance";
 
 interface Props {
   wordDifficulty: 1 | 2 | 3 | 4;
   onAnswer: (correct: boolean) => void;
   onStop: () => void;
+  autoAdvance?: number;
 }
 
 type Phase = "listen" | "hak" | "done";
@@ -20,10 +22,10 @@ function pickWord(difficulty: 1 | 2 | 3 | 4, exclude?: string): TaalWord {
   return pool[ri(0, pool.length - 1)];
 }
 
-export default function WoordHakken({ wordDifficulty, onAnswer, onStop }: Props) {
+export default function WoordHakken({ wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
   const [word,    setWord]    = useState<TaalWord>(() => pickWord(wordDifficulty));
   const [phase,   setPhase]   = useState<Phase>("listen");
-  const [cuts,    setCuts]    = useState<Set<number>>(new Set()); // indices AFTER which a cut exists
+  const [cuts,    setCuts]    = useState<Set<number>>(new Set());
   const [checked, setChecked] = useState(false);
   const [correct, setCorrect] = useState(false);
 
@@ -40,6 +42,8 @@ export default function WoordHakken({ wordDifficulty, onAnswer, onStop }: Props)
     setChecked(false);
     setCorrect(false);
   }, [wordDifficulty, word.id]);
+
+  const countdown = useAutoAdvance(checked, autoAdvance, nextWord);
 
   function toggleCut(afterIdx: number) {
     if (phase !== "hak" || checked) return;
@@ -175,8 +179,13 @@ export default function WoordHakken({ wordDifficulty, onAnswer, onStop }: Props)
               </div>
               <div className="flex gap-3">
                 <button type="button" onPointerUp={nextWord}
-                  className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md">
+                  className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md flex items-center gap-2">
                   Volgend woord →
+                  {countdown > 0 && (
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">
+                      {countdown}
+                    </span>
+                  )}
                 </button>
                 <button type="button" onPointerUp={onStop}
                   className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">

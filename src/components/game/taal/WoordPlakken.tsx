@@ -6,11 +6,13 @@ import { speakWord, speakSegment } from "@/lib/tts";
 import { getWordsByDifficulty } from "@/content/nl/words";
 import { ri } from "@/lib/gameLogic";
 import type { TaalWord } from "@/lib/taalContent";
+import { useAutoAdvance } from "@/hooks/useAutoAdvance";
 
 interface Props {
   wordDifficulty: 1 | 2 | 3 | 4;
   onAnswer: (correct: boolean) => void;
   onStop: () => void;
+  autoAdvance?: number;
 }
 
 function pickWord(difficulty: 1 | 2 | 3 | 4, exclude?: string): TaalWord {
@@ -24,7 +26,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 // ── Outer: beheert welk woord actief is ──────────────────────────────────────
 
-export default function WoordPlakken({ wordDifficulty, onAnswer, onStop }: Props) {
+export default function WoordPlakken({ wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
   const [word, setWord] = useState<TaalWord>(() => pickWord(wordDifficulty));
 
   const nextWord = useCallback(() => {
@@ -33,8 +35,9 @@ export default function WoordPlakken({ wordDifficulty, onAnswer, onStop }: Props
 
   return (
     <PlakkenRound
-      key={word.id}       // remount → fresh state per woord
+      key={word.id}
       word={word}
+      autoAdvance={autoAdvance}
       onAnswer={onAnswer}
       onNext={nextWord}
       onStop={onStop}
@@ -46,16 +49,19 @@ export default function WoordPlakken({ wordDifficulty, onAnswer, onStop }: Props
 
 interface RoundProps {
   word: TaalWord;
+  autoAdvance: number;
   onAnswer: (correct: boolean) => void;
   onNext: () => void;
   onStop: () => void;
 }
 
-function PlakkenRound({ word, onAnswer, onNext, onStop }: RoundProps) {
+function PlakkenRound({ word, autoAdvance, onAnswer, onNext, onStop }: RoundProps) {
   const [bank,    setBank]    = useState<string[]>(() => shuffle([...word.segments]));
   const [placed,  setPlaced]  = useState<string[]>([]);
   const [checked, setChecked] = useState(false);
   const [correct, setCorrect] = useState(false);
+
+  const countdown = useAutoAdvance(checked, autoAdvance, onNext);
 
   useEffect(() => {
     const t = setTimeout(() => speakWord(word.word), 300);
@@ -168,8 +174,13 @@ function PlakkenRound({ word, onAnswer, onNext, onStop }: RoundProps) {
           </div>
           <div className="flex gap-3">
             <button type="button" onPointerUp={onNext}
-              className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md">
+              className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md flex items-center gap-2">
               Volgend woord →
+              {countdown > 0 && (
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">
+                  {countdown}
+                </span>
+              )}
             </button>
             <button type="button" onPointerUp={onStop}
               className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">

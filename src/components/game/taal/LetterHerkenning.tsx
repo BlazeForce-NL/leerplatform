@@ -4,12 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import LetterBlock from "./LetterBlock";
 import { speakPhoneme } from "@/lib/tts";
 import { ri } from "@/lib/gameLogic";
+import { useAutoAdvance } from "@/hooks/useAutoAdvance";
 
 interface Props {
-  letterSet: string[];          // letters die in dit level voorkomen
-  allKnownLetters: string[];    // alle letters die het kind al kent (voor distractors)
+  letterSet: string[];
+  allKnownLetters: string[];
   onAnswer: (correct: boolean) => void;
   onStop: () => void;
+  autoAdvance?: number; // seconden (0 = uit)
 }
 
 interface Round {
@@ -30,7 +32,7 @@ function makeRound(letterSet: string[], known: string[]): Round {
   return { target, choices };
 }
 
-export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer, onStop }: Props) {
+export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer, onStop, autoAdvance = 3 }: Props) {
   const [round,    setRound]    = useState<Round>(() => makeRound(letterSet, allKnownLetters));
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -42,6 +44,8 @@ export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer,
     setAnswered(false);
     setFeedback("");
   }, [letterSet, allKnownLetters]);
+
+  const countdown = useAutoAdvance(answered, autoAdvance, nextRound);
 
   // Auto-play sound on mount and new round
   useEffect(() => {
@@ -103,9 +107,14 @@ export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer,
           <button
             type="button"
             onPointerUp={nextRound}
-            className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md"
+            className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md flex items-center gap-2"
           >
             Volgende →
+            {countdown > 0 && (
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">
+                {countdown}
+              </span>
+            )}
           </button>
           <button
             type="button"

@@ -22,13 +22,44 @@ export interface PhonemeSet {
 
 // ── Fonetische klanken per letter (NL) ───────────────────────────────────────
 
+// Klankwaarden zoals in Nederlandse fonetiek.
+// Aanhoudende klanken (frikativen, nasalen, lateralen) worden verlengd.
+// Plosieven (b,d,g,k,p,t) krijgen een neutrale Nederlandse klinker erna.
+// Gebruik IPA-nader Nederlands: schwa = "uh" klinkt Engels → gebruik "e" (de).
 export const NL_PHONEMES: Record<string, string> = {
-  a: "aaa", b: "buh", c: "kuh", d: "duh", e: "eee",
-  f: "fuh", g: "guh", h: "huh", i: "iii", j: "yuh",
-  k: "kuh", l: "luh", m: "muh", n: "nuh", o: "ooo",
-  p: "puh", q: "kwuh", r: "ruh", s: "sss", t: "tuh",
-  u: "uuu", v: "vuh", w: "wuh", x: "ksuh", y: "yuh",
-  z: "zzz",
+  // Klinkers
+  a: "a",     // korte a (kat)
+  e: "e",     // korte e (bed)
+  i: "i",     // korte i (vis)
+  o: "o",     // korte o (pot)
+  u: "u",     // korte u (bus)
+
+  // Aanhoudende medeklinkers — verleng de klank zodat TTS duidelijk is
+  f: "fff",   // frikatief
+  l: "lll",   // lateraal
+  m: "mmm",   // nasaal
+  n: "nnn",   // nasaal
+  r: "rrr",   // vibrant/rollend
+  s: "sss",   // sibilant
+  v: "vvv",   // stemhebbend frikatief
+  z: "zzz",   // sibilant stemhebbend
+
+  // Plosieven — korte neutrale klinker erna (NL schwa)
+  b: "be",    // stemhebbend labiaal
+  d: "de",    // stemhebbend dentaal
+  g: "ge",    // NL "g" (velaire frikatief) — TTS doet best moeite
+  h: "he",    // laryngaal
+  j: "je",    // palatale approximant (NL j = y-klank)
+  k: "ke",    // stemloze velaar
+  p: "pe",    // stemloze labiaal
+  t: "te",    // stemloze dentaal
+  w: "we",    // labiodentale approximant
+
+  // Overige
+  c: "se",    // in NL vaak s-klank
+  q: "kwe",
+  x: "ks",
+  y: "ie",    // NL y als in "baby" = ie-klank
 };
 
 // ── Letter-sets per herkenningsniveau ─────────────────────────────────────────

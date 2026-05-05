@@ -28,21 +28,22 @@ function say(text: string, lang = "nl-NL", rate = 0.85, pitch = 1.1) {
   speechSynthesis.speak(u);
 }
 
-// Spreek de klanknaam uit van een letter (niet de letternaam)
+// Spreek de klankwaarde van een letter uit (fonetisch, niet de letternaam).
+// Langzamer tempo + hogere toon voor duidelijkheid bij kinderen.
 export function speakPhoneme(letter: string) {
   const phoneme = NL_PHONEMES[letter.toLowerCase()] ?? letter;
-  say(phoneme, "nl-NL", 0.75, 1.2);
+  say(phoneme, "nl-NL", 0.65, 1.15);
 }
 
 // Spreek een heel woord uit
 export function speakWord(word: string) {
-  say(word, "nl-NL", 0.75, 1.0);
+  say(word, "nl-NL", 0.72, 1.0);
 }
 
-// Spreek een segment (klank in een woord) uit
+// Spreek een segment/klank uit (in hakken/plakken context)
 export function speakSegment(segment: string) {
   const phoneme = NL_PHONEMES[segment.toLowerCase()] ?? segment;
-  say(phoneme, "nl-NL", 0.65, 1.15);
+  say(phoneme, "nl-NL", 0.60, 1.1);
 }
 
 // Init voices alvast bij eerste gebruik

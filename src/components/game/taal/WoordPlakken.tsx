@@ -150,12 +150,14 @@ function PlakkenRound({ word, autoAdvance, onAnswer, onNext, onStop }: RoundProp
         )}
       </div>
 
-      {/* Letter-preview */}
-      <div className="flex gap-1 flex-wrap justify-center" aria-hidden="true">
-        {word.word.split("").map((l, i) => (
-          <LetterBlock key={i} letter={l} size="sm" />
-        ))}
-      </div>
+      {/* Letter-preview — alleen tonen NADAT gecheckt is (geen spoiler) */}
+      {checked && (
+        <div className="flex gap-1 flex-wrap justify-center" aria-hidden="true">
+          {word.word.split("").map((l, i) => (
+            <LetterBlock key={i} letter={l} size="sm" />
+          ))}
+        </div>
+      )}
 
       {/* Acties */}
       {!checked ? (

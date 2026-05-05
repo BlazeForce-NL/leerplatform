@@ -41,17 +41,39 @@ function buildLevelData(domainId: string): Record<string, LevelWithStatus> {
 }
 
 export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Props) {
-  const activeDomain = "rekenen";
-  // Lazy initialisatie: leest localStorage eenmalig bij mount (client-only)
+  const [activeDomain, setActiveDomain] = useState("rekenen");
   const [levelData, setLevelData] = useState<Record<string, LevelWithStatus>>(
-    () => buildLevelData(activeDomain),
+    () => buildLevelData("rekenen"),
   );
+
+  function switchDomain(id: string) {
+    setActiveDomain(id);
+    setLevelData(buildLevelData(id));
+  }
 
   const domain = SKILL_GRAPH.domains.find(d => d.id === activeDomain);
   if (!domain) return null;
 
   return (
     <div className="min-h-dvh bg-game-bg font-sans px-3 py-4 md:px-6">
+      {/* Domein-switcher */}
+      <div className="flex justify-center gap-2 mb-4 max-w-2xl mx-auto">
+        {SKILL_GRAPH.domains.map(d => (
+          <button
+            key={d.id}
+            type="button"
+            onPointerUp={() => switchDomain(d.id)}
+            className={`px-4 py-2 rounded-full border-2 text-sm font-bold cursor-pointer transition-colors ${
+              d.id === activeDomain
+                ? "bg-brand-blue border-brand-blue text-white"
+                : "bg-white border-gray-300 text-gray-600"
+            }`}
+          >
+            {d.emoji} {d.name}
+          </button>
+        ))}
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between mb-4 max-w-2xl mx-auto">
         <h1 className="text-xl font-bold text-gray-800">{domain.emoji} {domain.name}</h1>

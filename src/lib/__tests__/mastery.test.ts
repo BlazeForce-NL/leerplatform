@@ -137,7 +137,12 @@ describe("getActiveLevelId", () => {
 
   it("geeft null voor onbekend domein", () => {
     const store = createLocalMasteryStore(PLAYER);
-    expect(store.getActiveLevelId(SKILL_GRAPH, "taal")).toBeNull();
+    expect(store.getActiveLevelId(SKILL_GRAPH, "wiskunde")).toBeNull();
+  });
+
+  it("geeft letter-1 voor nieuwe speler in taal-domein", () => {
+    const store = createLocalMasteryStore(PLAYER);
+    expect(store.getActiveLevelId(SKILL_GRAPH, "taal")).toBe("letter-1");
   });
 });
 

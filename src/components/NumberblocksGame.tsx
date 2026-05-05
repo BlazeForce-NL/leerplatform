@@ -14,31 +14,40 @@ import GameScreen from "./game/GameScreen";
 import LevelMap from "./game/LevelMap";
 import BadgeUnlocked from "./game/BadgeUnlocked";
 import BadgeGallery from "./game/BadgeGallery";
+import TaalGame from "./game/taal/TaalGame";
 
 const WRAP = "min-h-dvh bg-game-bg font-sans";
 
 export default function NumberblocksGame() {
   const game = useGameState();
-  const playerIdRef = useRef<string>("");
   const [pendingBadges, setPendingBadges] = useState<Badge[]>([]);
+  const [playerId] = useState<string>(
+    () => typeof window !== "undefined" ? getPlayerId() : "",
+  );
   // scherm vóór badges, zodat we terug kunnen navigeren
   const prevScreenRef = useRef<typeof game.screen>("levels");
-
-  useEffect(() => { playerIdRef.current = getPlayerId(); }, []);
 
   // ── Level starten vanuit LevelMap ────────────────────────────────────────
 
   function startLevel(levelId: string) {
     const level = getLevelById(SKILL_GRAPH, levelId);
     if (!level) return;
-    const { mode, maxVal, timerSetting, allowedTables, specificTable, tableOrder } = level.content_config;
     game.setActiveLevelId(levelId);
-    game.setMode(mode);
-    game.setMaxVal(maxVal);
+
+    if (level.content_config.domain === "taal") {
+      // Taal-levels gaan naar het "game" scherm maar renderen TaalGame
+      game.setScreen("game");
+      return;
+    }
+
+    // Rekenen-flow
+    const { mode, maxVal, timerSetting, allowedTables, specificTable, tableOrder } = level.content_config;
+    game.setMode(mode ?? "plus");
+    game.setMaxVal(maxVal ?? 100);
     game.setTimerSetting(timerSetting);
     if (timerSetting > 0) game.setTimeLeft(timerSetting);
     game.setScreen("game");
-    game.newQ(mode, specificTable ?? 1, tableOrder ?? "mix", 0, timerSetting, maxVal, allowedTables);
+    game.newQ(mode ?? "plus", specificTable ?? 1, tableOrder ?? "mix", 0, timerSetting, maxVal ?? 100, allowedTables);
   }
 
   // ── Antwoord opslaan + badges checken ───────────────────────────────────
@@ -47,18 +56,20 @@ export default function NumberblocksGame() {
   useEffect(() => {
     if (!game.answered || prevAnswered.current) return;
     prevAnswered.current = true;
-    if (!game.activeLevelId || !playerIdRef.current) return;
+    if (!game.activeLevelId || !playerId) return;
 
-    const store = createLocalMasteryStore(playerIdRef.current);
+    const store = createLocalMasteryStore(playerId);
     const isCorrect = game.selected === (game.question?.answer ?? -1);
     const record = store.recordAnswer(game.activeLevelId, isCorrect);
 
     const newBadges = checkAndAwardBadges(
-      playerIdRef.current,
+      playerId,
       game.streak,
       game.timerSetting > 0,
     );
-    if (newBadges.length > 0) setPendingBadges(b => [...b, ...newBadges]);
+    if (newBadges.length > 0) {
+      setTimeout(() => setPendingBadges(b => [...b, ...newBadges]), 0);
+    }
 
     if (record.mastered) {
       setTimeout(() => game.setScreen("levels"), 2000);
@@ -143,7 +154,30 @@ export default function NumberblocksGame() {
     </div>
   );
 
-  // ── Game scherm ──────────────────────────────────────────────────────────
+  // ── Taal-level detecteren ────────────────────────────────────────────────
+  const activeLevelConfig = game.activeLevelId
+    ? getLevelById(SKILL_GRAPH, game.activeLevelId)?.content_config
+    : null;
+  const isTaalLevel = activeLevelConfig?.domain === "taal";
+
+  // ── Taal game scherm ─────────────────────────────────────────────────────
+  if (isTaalLevel && game.activeLevelId) {
+    return (
+      <>
+        {pendingBadges.length > 0 && (
+          <BadgeUnlocked badges={pendingBadges} onDone={() => setPendingBadges([])} />
+        )}
+        <TaalGame
+          levelId={game.activeLevelId}
+          playerId={playerId}
+          onStop={game.endSession}
+          onGoToLevels={() => game.setScreen("levels")}
+        />
+      </>
+    );
+  }
+
+  // ── Rekenen game scherm ──────────────────────────────────────────────────
   return (
     <div className={WRAP}>
       {pendingBadges.length > 0 && (

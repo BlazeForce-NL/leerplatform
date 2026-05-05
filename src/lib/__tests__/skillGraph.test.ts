@@ -30,10 +30,14 @@ describe("SKILL_GRAPH structuur", () => {
 
   it("elk level heeft geldige content_config", () => {
     for (const level of all) {
-      const { mode, maxVal, timerSetting } = level.content_config;
-      expect(mode).toBeTruthy();
-      expect(maxVal).toBeGreaterThan(0);
-      expect(timerSetting).toBeGreaterThanOrEqual(0);
+      const cfg = level.content_config;
+      expect(cfg.timerSetting).toBeGreaterThanOrEqual(0);
+      if (!cfg.domain || cfg.domain === "rekenen") {
+        expect(cfg.mode).toBeTruthy();
+        expect(cfg.maxVal).toBeGreaterThan(0);
+      } else {
+        expect(cfg.taalSkill).toBeTruthy();
+      }
     }
   });
 

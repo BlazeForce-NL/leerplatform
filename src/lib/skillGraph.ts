@@ -2,13 +2,26 @@ import type { Mode } from "./gameLogic";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+export type TaalSkill = "letters" | "hakken" | "plakken" | "schrijven";
+
 export interface ContentConfig {
-  mode: Mode;
-  maxVal: number;
-  timerSetting: number;
-  allowedTables?: number[]; // subset van tafels (bijv. [1,2,5,10])
+  // Discriminator
+  domain?: "rekenen" | "taal"; // undefined = rekenen (backward compat)
+
+  // Rekenen
+  mode?: Mode;
+  maxVal?: number;
+  allowedTables?: number[];
   specificTable?: number;
   tableOrder?: "volgorde" | "mix";
+
+  // Taal
+  taalSkill?: TaalSkill;
+  letterSet?: string[];      // voor letterherkenning
+  wordDifficulty?: 1 | 2 | 3 | 4;
+
+  // Gedeeld
+  timerSetting: number;
 }
 
 export interface SkillLevel {
@@ -189,6 +202,73 @@ export const SKILL_GRAPH: SkillGraph = {
               ...DEFAULT, id: "mix-3", name: "Alles door elkaar",
               depends_on: ["mix-2", "min-5"],
               content_config: { mode: "alles", maxVal: 1000, timerSetting: 0 },
+            },
+          ],
+        },
+      ],
+    },
+
+    // ── Taal domein ───────────────────────────────────────────────────────────
+    {
+      id: "taal",
+      name: "Taal",
+      emoji: "📖",
+      skills: [
+        {
+          id: "letters",
+          name: "Letters herkennen",
+          levels: [
+            {
+              ...DEFAULT, id: "letter-1", name: "Letters s, a, m, r, e, i",
+              depends_on: [],
+              content_config: { domain: "taal", taalSkill: "letters", letterSet: ["s","a","m","r","e","i"], timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "letter-2", name: "Letters o, n, t, d, l, p",
+              depends_on: ["letter-1"],
+              content_config: { domain: "taal", taalSkill: "letters", letterSet: ["o","n","t","d","l","p"], timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "letter-3", name: "Letters k, b, g, v, w, j",
+              depends_on: ["letter-2"],
+              content_config: { domain: "taal", taalSkill: "letters", letterSet: ["k","b","g","v","w","j"], timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "letter-4", name: "Letters h, u, z, f, c, x, q, y",
+              depends_on: ["letter-3"],
+              content_config: { domain: "taal", taalSkill: "letters", letterSet: ["h","u","z","f","c","x","q","y"], timerSetting: 0 },
+            },
+          ],
+        },
+        {
+          id: "hakken",
+          name: "Woordjes hakken",
+          levels: [
+            {
+              ...DEFAULT, id: "hakken-1", name: "Hakken — korte woorden (MKM)",
+              depends_on: ["letter-1"],
+              content_config: { domain: "taal", taalSkill: "hakken", wordDifficulty: 1, timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "hakken-2", name: "Hakken — 4-letter woorden",
+              depends_on: ["hakken-1", "letter-2"],
+              content_config: { domain: "taal", taalSkill: "hakken", wordDifficulty: 2, timerSetting: 0 },
+            },
+          ],
+        },
+        {
+          id: "plakken",
+          name: "Woordjes plakken",
+          levels: [
+            {
+              ...DEFAULT, id: "plakken-1", name: "Plakken — korte woorden",
+              depends_on: ["hakken-1"],
+              content_config: { domain: "taal", taalSkill: "plakken", wordDifficulty: 1, timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "plakken-2", name: "Plakken — 4-letter woorden",
+              depends_on: ["plakken-1", "hakken-2"],
+              content_config: { domain: "taal", taalSkill: "plakken", wordDifficulty: 2, timerSetting: 0 },
             },
           ],
         },

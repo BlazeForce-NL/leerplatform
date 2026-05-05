@@ -182,6 +182,14 @@ export default function GameScreen({
           </button>
           {mobileSettingsOpen && (
             <div className="mt-2 bg-white rounded-2xl p-3 shadow-sm flex flex-col gap-3">
+              {/* Domein-switcher */}
+              <div>
+                <div className="text-xs font-semibold text-gray-400 mb-1.5">Wereld</div>
+                <div className="flex gap-1.5">
+                  <button type="button" className={modeBtn(true, "plus")}>🔢 Rekenen</button>
+                  <button type="button" onPointerUp={onGoToLevels} className={modeBtn(false, "plus")}>📖 Taal</button>
+                </div>
+              </div>
               <div>
                 <div className="text-xs font-semibold text-gray-400 mb-1.5">Modus</div>
                 <div role="group" aria-label="Oefenmodus kiezen" className="flex flex-wrap gap-1.5">
@@ -325,6 +333,16 @@ export default function GameScreen({
 
         {sidebarOpen && (
           <div className="p-3 flex flex-col gap-4">
+            {/* Domein-switcher */}
+            <div>
+              <div className="text-xs font-semibold text-gray-400 mb-2">Wereld</div>
+              <div className="flex gap-1.5">
+                <button type="button" className={modeBtn(true, "plus")}>🔢 Rekenen</button>
+                <button type="button" onPointerUp={onGoToLevels}
+                  className={modeBtn(false, "plus")}>📖 Taal</button>
+              </div>
+            </div>
+
             {/* Mode */}
             <div>
               <div className="text-xs font-semibold text-gray-400 mb-2">Modus</div>

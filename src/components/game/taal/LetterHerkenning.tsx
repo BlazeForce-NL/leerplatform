@@ -53,6 +53,18 @@ export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer,
     return () => clearTimeout(t);
   }, [round.target]);
 
+  // Keyboard-input (PC): druk de letter-toets om te antwoorden
+  useEffect(() => {
+    if (answered) return;
+    function onKey(e: KeyboardEvent) {
+      const k = e.key.toLowerCase();
+      if (round.choices.includes(k)) handleAnswer(k);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answered, round.choices]);
+
   function handleAnswer(letter: string) {
     if (answered) return;
     setSelected(letter);

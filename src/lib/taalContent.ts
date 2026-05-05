@@ -1,6 +1,10 @@
 // ── Taal content types ────────────────────────────────────────────────────────
 
-export type WordStructure = "MKM" | "MMKM" | "MKMM" | "MMKMM" | "MKKM";
+export type WordStructure =
+  | "MKM" | "MMKM" | "MKMM" | "MKKM"
+  | "MMKMM" | "MKKMM" | "MMKKM" | "MMMKM" | "MMMMK"
+  | "MMKKMM" | "MMMKMM" | "MMMKKM" | "MMKMMM"
+  | string; // fallback voor ongebruikelijke patronen
 export type Locale = "nl" | "en";
 
 export interface TaalWord {

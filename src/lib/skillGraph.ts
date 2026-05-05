@@ -2,7 +2,18 @@ import type { Mode } from "./gameLogic";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type TaalSkill = "letters" | "hakken" | "plakken" | "schrijven";
+export type TaalSkill =
+  | "letters"
+  | "plakken"
+  | "missende-letter"
+  | "schrijven"
+  | "eindletter"
+  | "beginletter"
+  | "rijmwoord"
+  | "klanken-tellen"
+  | "woordtypist"
+  | "woordvolgorde"
+  | "woordsoort";
 
 export interface ContentConfig {
   // Discriminator
@@ -241,34 +252,113 @@ export const SKILL_GRAPH: SkillGraph = {
           ],
         },
         {
-          id: "hakken",
-          name: "Woordjes hakken",
-          levels: [
-            {
-              ...DEFAULT, id: "hakken-1", name: "Hakken — korte woorden (MKM)",
-              depends_on: ["letter-1"],
-              content_config: { domain: "taal", taalSkill: "hakken", wordDifficulty: 1, timerSetting: 0 },
-            },
-            {
-              ...DEFAULT, id: "hakken-2", name: "Hakken — 4-letter woorden",
-              depends_on: ["hakken-1", "letter-2"],
-              content_config: { domain: "taal", taalSkill: "hakken", wordDifficulty: 2, timerSetting: 0 },
-            },
-          ],
-        },
-        {
           id: "plakken",
           name: "Woordjes plakken",
           levels: [
             {
-              ...DEFAULT, id: "plakken-1", name: "Plakken — korte woorden",
-              depends_on: ["hakken-1"],
+              ...DEFAULT, id: "plakken-1", name: "Plakken — 3-letter woorden",
+              depends_on: ["letter-1"],
               content_config: { domain: "taal", taalSkill: "plakken", wordDifficulty: 1, timerSetting: 0 },
             },
             {
               ...DEFAULT, id: "plakken-2", name: "Plakken — 4-letter woorden",
-              depends_on: ["plakken-1", "hakken-2"],
+              depends_on: ["plakken-1", "letter-2"],
               content_config: { domain: "taal", taalSkill: "plakken", wordDifficulty: 2, timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "plakken-3", name: "Plakken — 5-letter woorden",
+              depends_on: ["plakken-2"],
+              content_config: { domain: "taal", taalSkill: "plakken", wordDifficulty: 3, timerSetting: 0 },
+            },
+          ],
+        },
+        {
+          id: "eindletter",
+          name: "Eindletter",
+          levels: [
+            { ...DEFAULT, id: "eindletter-1", name: "Welke letter als laatste? — 3 letters", depends_on: ["letter-1"],
+              content_config: { domain: "taal", taalSkill: "eindletter", wordDifficulty: 1, timerSetting: 0 } },
+            { ...DEFAULT, id: "eindletter-2", name: "Welke letter als laatste? — 4 letters", depends_on: ["eindletter-1", "letter-2"],
+              content_config: { domain: "taal", taalSkill: "eindletter", wordDifficulty: 2, timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "beginletter",
+          name: "Beginletter",
+          levels: [
+            { ...DEFAULT, id: "beginletter-1", name: "Welk woord begint met deze klank?", depends_on: ["letter-1"],
+              content_config: { domain: "taal", taalSkill: "beginletter", timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "rijmwoord",
+          name: "Rijmwoord",
+          levels: [
+            { ...DEFAULT, id: "rijmwoord-1", name: "Welk woord rijmt?", depends_on: ["letter-2"],
+              content_config: { domain: "taal", taalSkill: "rijmwoord", timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "klanken-tellen",
+          name: "Klanken tellen",
+          levels: [
+            { ...DEFAULT, id: "klanken-1", name: "Hoeveel klanken? — 3 letters", depends_on: ["letter-1"],
+              content_config: { domain: "taal", taalSkill: "klanken-tellen", wordDifficulty: 1, timerSetting: 0 } },
+            { ...DEFAULT, id: "klanken-2", name: "Hoeveel klanken? — 4-5 letters", depends_on: ["klanken-1", "letter-2"],
+              content_config: { domain: "taal", taalSkill: "klanken-tellen", wordDifficulty: 2, timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "woordtypist",
+          name: "Woordtypist",
+          levels: [
+            { ...DEFAULT, id: "typist-1", name: "Typ het woord — 3 letters", depends_on: ["plakken-1"],
+              content_config: { domain: "taal", taalSkill: "woordtypist", wordDifficulty: 1, timerSetting: 0 } },
+            { ...DEFAULT, id: "typist-2", name: "Typ het woord — 4 letters", depends_on: ["typist-1"],
+              content_config: { domain: "taal", taalSkill: "woordtypist", wordDifficulty: 2, timerSetting: 0 } },
+            { ...DEFAULT, id: "typist-3", name: "Typ het woord — 5 letters", depends_on: ["typist-2"],
+              content_config: { domain: "taal", taalSkill: "woordtypist", wordDifficulty: 3, timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "woordvolgorde",
+          name: "Woordvolgorde",
+          levels: [
+            { ...DEFAULT, id: "volgorde-1", name: "Zet de zin in orde", depends_on: ["plakken-1"],
+              content_config: { domain: "taal", taalSkill: "woordvolgorde", timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "woordsoort",
+          name: "Woordsoort",
+          levels: [
+            { ...DEFAULT, id: "soort-1", name: "Welke woorden horen erbij?", depends_on: ["letter-2"],
+              content_config: { domain: "taal", taalSkill: "woordsoort", timerSetting: 0 } },
+          ],
+        },
+        {
+          id: "missende-letter",
+          name: "Missende letter",
+          levels: [
+            {
+              ...DEFAULT, id: "missend-1", name: "Missende klinker — 3 letters",
+              depends_on: ["letter-1"],
+              content_config: { domain: "taal", taalSkill: "missende-letter", wordDifficulty: 1, timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "missend-2", name: "Missende medeklinker — 3 letters",
+              depends_on: ["missend-1"],
+              content_config: { domain: "taal", taalSkill: "missende-letter", wordDifficulty: 2, timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "missend-3", name: "Missende letter — 4 letters",
+              depends_on: ["missend-2", "letter-2"],
+              content_config: { domain: "taal", taalSkill: "missende-letter", wordDifficulty: 3, timerSetting: 0 },
+            },
+            {
+              ...DEFAULT, id: "missend-4", name: "Missende letter — 5 letters",
+              depends_on: ["missend-3"],
+              content_config: { domain: "taal", taalSkill: "missende-letter", wordDifficulty: 4, timerSetting: 0 },
             },
           ],
         },

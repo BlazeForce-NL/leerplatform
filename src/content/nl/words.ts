@@ -60,7 +60,37 @@ const L2: TaalWord[] = [
   { id: "nl-film",  word: "film",  locale: "nl", segments: ["f","i","l","m"],  structure: "MKMM", difficulty: 2, skillLevel: "hakken-2", emoji: "🎬" },
 ];
 
-export const NL_WORDS: TaalWord[] = [...L1, ...L2];
+// ── Level 3 — 5-letter woorden ───────────────────────────────────────────────
+
+const L3: TaalWord[] = [
+  { id: "nl-krant", word: "krant", locale: "nl", segments: ["k","r","a","n","t"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "📰" },
+  { id: "nl-plant", word: "plant", locale: "nl", segments: ["p","l","a","n","t"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "🌱" },
+  { id: "nl-brons", word: "brons", locale: "nl", segments: ["b","r","o","n","s"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "🥉" },
+  { id: "nl-prent", word: "prent", locale: "nl", segments: ["p","r","e","n","t"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "🖼️" },
+  { id: "nl-klamp", word: "klamp", locale: "nl", segments: ["k","l","a","m","p"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "🔧" },
+  { id: "nl-trots", word: "trots", locale: "nl", segments: ["t","r","o","t","s"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "💪" },
+  { id: "nl-strak", word: "strak", locale: "nl", segments: ["s","t","r","a","k"], structure: "MMMMK", difficulty: 3, skillLevel: "plakken-3", emoji: "📏" },
+  { id: "nl-vrouw", word: "vrouw", locale: "nl", segments: ["v","r","o","u","w"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "👩" },
+  { id: "nl-prins", word: "prins", locale: "nl", segments: ["p","r","i","n","s"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "🤴" },
+  { id: "nl-blauw", word: "blauw", locale: "nl", segments: ["b","l","a","u","w"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "💙" },
+  { id: "nl-groen", word: "groen", locale: "nl", segments: ["g","r","o","e","n"], structure: "MMKMM", difficulty: 3, skillLevel: "plakken-3", emoji: "💚" },
+  { id: "nl-droom", word: "droom", locale: "nl", segments: ["d","r","o","o","m"], structure: "MMKKM", difficulty: 3, skillLevel: "plakken-3", emoji: "💭" },
+  { id: "nl-steel", word: "steel", locale: "nl", segments: ["s","t","e","e","l"], structure: "MMKKM", difficulty: 3, skillLevel: "plakken-3", emoji: "🌹" },
+  { id: "nl-spook", word: "spook", locale: "nl", segments: ["s","p","o","o","k"], structure: "MMKKM", difficulty: 3, skillLevel: "plakken-3", emoji: "👻" },
+  { id: "nl-kleur", word: "kleur", locale: "nl", segments: ["k","l","e","u","r"], structure: "MMKKM", difficulty: 3, skillLevel: "plakken-3", emoji: "🎨" },
+];
+
+// ── Level 4 — 6-letter woorden ───────────────────────────────────────────────
+
+const L4: TaalWord[] = [
+  { id: "nl-strand", word: "strand", locale: "nl", segments: ["s","t","r","a","n","d"], structure: "MMKMM", difficulty: 4, skillLevel: "plakken-3", emoji: "🏖️" },
+  { id: "nl-school", word: "school", locale: "nl", segments: ["s","c","h","o","o","l"], structure: "MMMKKM", difficulty: 4, skillLevel: "plakken-3", emoji: "🏫" },
+  { id: "nl-bloem",  word: "bloem",  locale: "nl", segments: ["b","l","o","e","m"],    structure: "MMKKM",  difficulty: 4, skillLevel: "plakken-3", emoji: "🌸" },
+  { id: "nl-zwaard", word: "zwaard", locale: "nl", segments: ["z","w","a","a","r","d"], structure: "MMKKM",  difficulty: 4, skillLevel: "plakken-3", emoji: "⚔️" },
+  { id: "nl-sprong", word: "sprong", locale: "nl", segments: ["s","p","r","o","n","g"], structure: "MMMKMM", difficulty: 4, skillLevel: "plakken-3", emoji: "🐸" },
+];
+
+export const NL_WORDS: TaalWord[] = [...L1, ...L2, ...L3, ...L4];
 
 export function getWordsByDifficulty(d: 1 | 2 | 3 | 4): TaalWord[] {
   return NL_WORDS.filter(w => w.difficulty === d);

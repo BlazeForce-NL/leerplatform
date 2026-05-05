@@ -12,7 +12,8 @@ import SessionSummary from "./game/SessionSummary";
 import NameScreen from "./game/NameScreen";
 import GameScreen from "./game/GameScreen";
 import LevelMap from "./game/LevelMap";
-import BadgeToast from "./game/BadgeToast";
+import BadgeUnlocked from "./game/BadgeUnlocked";
+import BadgeGallery from "./game/BadgeGallery";
 
 const WRAP = "min-h-dvh bg-game-bg font-sans";
 
@@ -20,11 +21,12 @@ export default function NumberblocksGame() {
   const game = useGameState();
   const playerIdRef = useRef<string>("");
   const [pendingBadges, setPendingBadges] = useState<Badge[]>([]);
+  // scherm vóór badges, zodat we terug kunnen navigeren
+  const prevScreenRef = useRef<typeof game.screen>("levels");
 
-  // Lazy-init playerId (client-only)
   useEffect(() => { playerIdRef.current = getPlayerId(); }, []);
 
-  // ── Progressie: level selecteren vanuit LevelMap ─────────────────────────
+  // ── Level starten vanuit LevelMap ────────────────────────────────────────
 
   function startLevel(levelId: string) {
     const level = getLevelById(SKILL_GRAPH, levelId);
@@ -39,19 +41,18 @@ export default function NumberblocksGame() {
     game.newQ(mode, specificTable ?? 1, tableOrder ?? "mix", 0, timerSetting, maxVal, allowedTables);
   }
 
-  // ── Progressie: antwoord opslaan in mastery tracker ─────────────────────
+  // ── Antwoord opslaan + badges checken ───────────────────────────────────
 
   const prevAnswered = useRef(false);
   useEffect(() => {
     if (!game.answered || prevAnswered.current) return;
     prevAnswered.current = true;
-
     if (!game.activeLevelId || !playerIdRef.current) return;
+
     const store = createLocalMasteryStore(playerIdRef.current);
     const isCorrect = game.selected === (game.question?.answer ?? -1);
     const record = store.recordAnswer(game.activeLevelId, isCorrect);
 
-    // Badges checken
     const newBadges = checkAndAwardBadges(
       playerIdRef.current,
       game.streak,
@@ -59,19 +60,17 @@ export default function NumberblocksGame() {
     );
     if (newBadges.length > 0) setPendingBadges(b => [...b, ...newBadges]);
 
-    // Level beheerst → terug naar kaart na 2s
     if (record.mastered) {
       setTimeout(() => game.setScreen("levels"), 2000);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.answered]);
 
-  // Reset prevAnswered wanneer een nieuwe vraag start
   useEffect(() => {
     if (!game.answered) prevAnswered.current = false;
   }, [game.answered]);
 
-  // ── Schermrouting ─────────────────────────────────────────────────────────
+  // ── Schermrouting ────────────────────────────────────────────────────────
 
   if (game.screen === "name") return (
     <div className={WRAP}>
@@ -80,14 +79,28 @@ export default function NumberblocksGame() {
   );
 
   if (game.screen === "levels") return (
-    <LevelMap
-      onSelectLevel={startLevel}
-      onVrijSpelen={() => {
-        game.setActiveLevelId(null);
-        game.setScreen("game");
-        game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting);
-      }}
-    />
+    <>
+      <LevelMap
+        onSelectLevel={startLevel}
+        onBadges={() => {
+          prevScreenRef.current = "levels";
+          game.setScreen("badges");
+        }}
+        onVrijSpelen={() => {
+          game.setActiveLevelId(null);
+          game.setScreen("game");
+          game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting);
+        }}
+      />
+      {/* Badge unlock overlay bovenop de levelmap (zeldzaam maar mogelijk) */}
+      {pendingBadges.length > 0 && (
+        <BadgeUnlocked badges={pendingBadges} onDone={() => setPendingBadges([])} />
+      )}
+    </>
+  );
+
+  if (game.screen === "badges") return (
+    <BadgeGallery onBack={() => game.setScreen(prevScreenRef.current)} />
   );
 
   if (game.screen === "summary") return (
@@ -98,22 +111,15 @@ export default function NumberblocksGame() {
         correct={game.correctCount} total={game.totalCount} isNewHigh={game.isNewHigh}
         onPlay={() => {
           game.resetGame();
-          if (game.activeLevelId) {
-            startLevel(game.activeLevelId);
-          } else {
-            game.setScreen("game");
-            game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting);
-          }
+          if (game.activeLevelId) startLevel(game.activeLevelId);
+          else { game.setScreen("game"); game.newQ(game.mode, game.specificTable, game.tableOrder, 0, game.timerSetting); }
         }}
         onBoard={() => game.setScreen("board")}
       />
       {game.activeLevelId && (
         <div className="text-center mt-3">
-          <button
-            type="button"
-            onPointerUp={() => game.setScreen("levels")}
-            className="text-sm text-blue-600 underline cursor-pointer"
-          >
+          <button type="button" onPointerUp={() => game.setScreen("levels")}
+            className="text-sm text-blue-600 underline cursor-pointer">
             ← Terug naar niveaukaart
           </button>
         </div>
@@ -125,29 +131,23 @@ export default function NumberblocksGame() {
     <div className={`${WRAP} p-4`}>
       <Scoreboard allScores={game.allScores} onClose={() => game.setScreen("game")} />
       <div className="text-center mt-5 flex flex-col gap-3 items-center">
-        <button
-          type="button"
-          onPointerUp={() => game.setScreen("levels")}
-          className="py-2.5 px-7 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer"
-        >
+        <button type="button" onPointerUp={() => game.setScreen("levels")}
+          className="py-2.5 px-7 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer">
           Niveaukaart
         </button>
-        <button
-          type="button"
-          onPointerUp={() => { game.resetGame(); game.setScreen("name"); }}
-          className="text-sm text-gray-500 underline cursor-pointer"
-        >
+        <button type="button" onPointerUp={() => { game.resetGame(); game.setScreen("name"); }}
+          className="text-sm text-gray-500 underline cursor-pointer">
           Nieuw spel
         </button>
       </div>
     </div>
   );
 
-  // Game scherm
+  // ── Game scherm ──────────────────────────────────────────────────────────
   return (
     <div className={WRAP}>
       {pendingBadges.length > 0 && (
-        <BadgeToast badges={pendingBadges} onDone={() => setPendingBadges([])} />
+        <BadgeUnlocked badges={pendingBadges} onDone={() => setPendingBadges([])} />
       )}
       <GameScreen
         player={game.player} mode={game.mode} specificTable={game.specificTable}

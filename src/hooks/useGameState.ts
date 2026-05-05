@@ -9,7 +9,7 @@ import {
   makeQ, makeChoices, scoreCat, calcScore, ri,
 } from "@/lib/gameLogic";
 
-export type Screen = "name" | "levels" | "game" | "summary" | "board";
+export type Screen = "name" | "levels" | "badges" | "game" | "summary" | "board";
 
 export interface GameState {
   screen: Screen;

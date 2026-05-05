@@ -8,6 +8,7 @@ import { getPlayerId } from "@/lib/playerId";
 interface Props {
   onSelectLevel: (levelId: string) => void;
   onVrijSpelen: () => void;
+  onBadges: () => void;
 }
 
 type LevelStatus = "locked" | "unlocked" | "active" | "mastered";
@@ -39,7 +40,7 @@ function buildLevelData(domainId: string): Record<string, LevelWithStatus> {
   return result;
 }
 
-export default function LevelMap({ onSelectLevel, onVrijSpelen }: Props) {
+export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Props) {
   const activeDomain = "rekenen";
   // Lazy initialisatie: leest localStorage eenmalig bij mount (client-only)
   const [levelData, setLevelData] = useState<Record<string, LevelWithStatus>>(
@@ -61,6 +62,14 @@ export default function LevelMap({ onSelectLevel, onVrijSpelen }: Props) {
             className="px-2.5 py-1.5 rounded-full border-2 border-gray-200 bg-white text-gray-400 text-xs font-semibold cursor-pointer"
             aria-label="Kaart vernieuwen"
           >↺</button>
+          <button
+            type="button"
+            onPointerUp={onBadges}
+            className="px-3 py-1.5 rounded-full border-2 border-brand-yellow bg-white text-gray-700 text-xs font-semibold cursor-pointer hover:bg-brand-yellow/10"
+            aria-label="Mijn badges bekijken"
+          >
+            🏅 Badges
+          </button>
           <button
             type="button"
             onPointerUp={onVrijSpelen}

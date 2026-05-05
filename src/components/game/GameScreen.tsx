@@ -8,6 +8,7 @@ import Numberling from "./Numberling";
 import Confetti from "./Confetti";
 import TimerArc from "./TimerArc";
 import Scoreboard from "./Scoreboard";
+import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 const BTN_BASE = "px-3 py-1 min-h-touch rounded-full border-2 font-semibold text-sm cursor-pointer";
 const BTN_OFF  = `${BTN_BASE} border-gray-300 bg-white text-gray-600`;
@@ -182,14 +183,15 @@ export default function GameScreen({
           </button>
           {mobileSettingsOpen && (
             <div className="mt-2 bg-white rounded-2xl p-3 shadow-sm flex flex-col gap-3">
-              {/* Domein-switcher */}
+              {/* Domein-switcher + taalwisselaar */}
               <div>
                 <div className="text-xs font-semibold text-gray-400 mb-1.5">Wereld</div>
-                <div className="flex gap-1.5">
+                <div className="flex gap-1.5 flex-wrap">
                   <button type="button" className={modeBtn(true, "plus")}>🔢 Rekenen</button>
                   <button type="button" onPointerUp={onGoToLevels} className={modeBtn(false, "plus")}>📖 Taal</button>
                 </div>
               </div>
+              <LocaleSwitcher />
               <div>
                 <div className="text-xs font-semibold text-gray-400 mb-1.5">Modus</div>
                 <div role="group" aria-label="Oefenmodus kiezen" className="flex flex-wrap gap-1.5">
@@ -333,15 +335,16 @@ export default function GameScreen({
 
         {sidebarOpen && (
           <div className="p-3 flex flex-col gap-4">
-            {/* Domein-switcher */}
+            {/* Domein-switcher + taalwisselaar */}
             <div>
               <div className="text-xs font-semibold text-gray-400 mb-2">Wereld</div>
-              <div className="flex gap-1.5">
+              <div className="flex gap-1.5 flex-wrap">
                 <button type="button" className={modeBtn(true, "plus")}>🔢 Rekenen</button>
                 <button type="button" onPointerUp={onGoToLevels}
                   className={modeBtn(false, "plus")}>📖 Taal</button>
               </div>
             </div>
+            <LocaleSwitcher />
 
             {/* Mode */}
             <div>

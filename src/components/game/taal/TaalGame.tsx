@@ -15,6 +15,7 @@ import KlankenTellen from "./KlankenTellen";
 import Woordtypist from "./Woordtypist";
 import Woordvolgorde from "./Woordvolgorde";
 import Woordsoort from "./Woordsoort";
+import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 interface Props {
   levelId: string;
@@ -147,6 +148,9 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
           ))}
         </div>
       </div>
+
+      {/* Taalwisselaar */}
+      <LocaleSwitcher />
     </>
   );
 

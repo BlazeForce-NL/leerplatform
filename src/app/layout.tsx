@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import LocaleProvider from "@/components/LocaleProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,9 @@ export default function RootLayout({
     >
       <body suppressHydrationWarning>
         <a href="#main-content" className="skip-link">Ga naar inhoud</a>
-        <main id="main-content">{children}</main>
+        <LocaleProvider>
+          <main id="main-content">{children}</main>
+        </LocaleProvider>
       </body>
     </html>
   );

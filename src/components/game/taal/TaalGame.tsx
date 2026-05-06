@@ -16,6 +16,7 @@ import Woordtypist from "./Woordtypist";
 import Woordvolgorde from "./Woordvolgorde";
 import Woordsoort from "./Woordsoort";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   levelId: string;
@@ -31,18 +32,7 @@ const AUTO_OPTS = [
   { l: "10s",  v: 10 },
 ];
 
-const SKILL_LABELS: Partial<Record<TaalSkill, string>> = {
-  letters:         "🔤 Letters",
-  plakken:         "🔗 Plakken",
-  "missende-letter": "🔲 Missende letter",
-  eindletter:      "🔚 Eindletter",
-  beginletter:     "🔛 Beginletter",
-  rijmwoord:       "🎵 Rijmwoord",
-  "klanken-tellen": "🔢 Klanken tellen",
-  woordtypist:     "⌨️ Woordtypist",
-  woordvolgorde:   "🔀 Woordvolgorde",
-  woordsoort:      "🗂️ Woordsoort",
-};
+// Labels now sourced from t.taal.skills at runtime
 
 const SKILLS_ORDER: TaalSkill[] = [
   "letters", "eindletter", "beginletter", "klanken-tellen",
@@ -55,6 +45,7 @@ const B_ON = `${BTN} border-brand-blue bg-brand-blue text-white`;
 const B_OF = `${BTN} border-gray-300 bg-white text-gray-600`;
 
 export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Props) {
+  const t = useT();
   const level = getLevelById(SKILL_GRAPH, levelId);
 
   const [activeSkill,    setActiveSkill]    = useState<TaalSkill>(level?.content_config.taalSkill ?? "letters");
@@ -87,22 +78,22 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
     <>
       {/* Domein-switcher */}
       <div>
-        <div className="text-xs font-semibold text-gray-400 mb-1.5">Wereld</div>
+        <div className="text-xs font-semibold text-gray-400 mb-1.5">{t.general.world}</div>
         <div className="flex gap-1.5">
           <button type="button" onPointerUp={onGoToLevels}
-            className={B_OF}>🔢 Rekenen</button>
-          <button type="button" className={B_ON}>📖 Taal</button>
+            className={B_OF}>{t.levels.math}</button>
+          <button type="button" className={B_ON}>{t.levels.language}</button>
         </div>
       </div>
 
       {/* Activiteit */}
       <div>
-        <div className="text-xs font-semibold text-gray-400 mb-1.5">Activiteit</div>
+        <div className="text-xs font-semibold text-gray-400 mb-1.5">{t.general.activity}</div>
         <div className="flex flex-wrap gap-1.5">
           {SKILLS_ORDER.map(s => (
             <button key={s} type="button" onPointerUp={() => setActiveSkill(s)}
               className={activeSkill === s ? B_ON : B_OF}>
-              {SKILL_LABELS[s] ?? s}
+              {t.taal.skills[s] ?? s}
             </button>
           ))}
         </div>
@@ -111,7 +102,7 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
       {/* Letter-set (alleen bij letterherkenning/beginletter/eindletter) */}
       {(activeSkill === "letters" || activeSkill === "eindletter" || activeSkill === "beginletter") && (
         <div>
-          <div className="text-xs font-semibold text-gray-400 mb-1.5">Letter-set</div>
+          <div className="text-xs font-semibold text-gray-400 mb-1.5">{t.general.letterSet}</div>
           <div className="flex flex-wrap gap-1.5">
             {LETTER_SETS.map((s, i) => (
               <button key={s.levelId} type="button" onPointerUp={() => setLetterSetIdx(i)}
@@ -126,12 +117,12 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
       {/* Moeilijkheid woorden */}
       {["plakken","missende-letter","eindletter","klanken-tellen","woordtypist"].includes(activeSkill) && (
         <div>
-          <div className="text-xs font-semibold text-gray-400 mb-1.5">Moeilijkheid</div>
+          <div className="text-xs font-semibold text-gray-400 mb-1.5">{t.game.difficulty}</div>
           <div className="flex flex-wrap gap-1.5">
             {([1,2,3] as const).map(d => (
               <button key={d} type="button" onPointerUp={() => setWordDifficulty(d)}
                 className={wordDifficulty === d ? B_ON : B_OF}>
-                {d === 1 ? "3 letters" : d === 2 ? "4 letters" : "5 letters"}
+                {d === 1 ? t.general.difficulty.easy : d === 2 ? t.general.difficulty.medium : t.general.difficulty.hard}
               </button>
             ))}
           </div>
@@ -140,11 +131,13 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
 
       {/* Auto-advance */}
       <div>
-        <div className="text-xs font-semibold text-gray-400 mb-1.5">Automatisch door</div>
+        <div className="text-xs font-semibold text-gray-400 mb-1.5">{t.game.autoNext}</div>
         <div className="flex flex-wrap gap-1.5">
           {AUTO_OPTS.map(o => (
             <button key={o.v} type="button" onPointerUp={() => setAutoAdvance(o.v)}
-              className={autoAdvance === o.v ? B_ON : B_OF}>{o.l}</button>
+              className={autoAdvance === o.v ? B_ON : B_OF}>
+              {o.v === 0 ? t.general.none : o.l}
+            </button>
           ))}
         </div>
       </div>
@@ -179,11 +172,11 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
         <div className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-sm border-b border-gray-100">
           <button type="button" onPointerUp={onGoToLevels}
             className="px-2.5 py-1.5 rounded-xl border-2 border-gray-200 bg-white text-gray-500 text-xs font-semibold cursor-pointer"
-            aria-label="Naar niveaukaart">
-            🗺️ Kaart
+            aria-label={t.game.levelMap}>
+            🗺️ {t.game.levelMap}
           </button>
           <div className="text-center">
-            <div className="text-sm font-bold text-gray-700">{SKILL_LABELS[activeSkill] ?? activeSkill}</div>
+            <div className="text-sm font-bold text-gray-700">{t.taal.skills[activeSkill] ?? activeSkill}</div>
             <div className="text-xs text-gray-400">
               {score}/{total} goed
               {streak > 0 && <span className="ml-1 text-brand-yellow">{"⭐".repeat(Math.min(streak, 5))}</span>}
@@ -214,10 +207,10 @@ export default function TaalGame({ levelId, playerId, onStop, onGoToLevels }: Pr
       {/* Desktop zijbalk */}
       <aside className={`hidden md:flex md:flex-col md:border-l md:border-gray-200 md:bg-white md:overflow-y-auto md:transition-all md:duration-200 ${settingsOpen ? "md:w-72" : "md:w-12"}`}>
         <div className="p-2 border-b border-gray-100 flex items-center">
-          {settingsOpen && <span className="text-xs font-semibold text-gray-500 flex-1">Instellingen</span>}
+          {settingsOpen && <span className="text-xs font-semibold text-gray-500 flex-1">{t.game.settings}</span>}
           <button type="button" onPointerUp={() => setSettingsOpen(v => !v)}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 text-base cursor-pointer hover:bg-gray-50 flex-none"
-            aria-label={settingsOpen ? "Inklappen" : "Uitklappen"}>
+            aria-label={settingsOpen ? `${t.game.settings} inklappen` : `${t.game.settings} uitklappen`}>
             {settingsOpen ? "›" : "‹"}
           </button>
         </div>

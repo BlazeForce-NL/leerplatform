@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAudio } from "@/lib/useAudio";
 import { getStorageItem, setStorageItem } from "@/lib/storage";
+import { useT } from "@/lib/i18n";
 import {
   Mode, Q, ScoreEntry,
-  MSGS, ANON, STORAGE_KEY,
+  ANON, STORAGE_KEY,
   makeQ, makeChoices, scoreCat, calcScore, ri,
 } from "@/lib/gameLogic";
 
@@ -93,6 +94,7 @@ export function useGameState(): GameState & GameHandlers {
   const tIdxRef   = useRef(0);
   const maxValRef = useRef(100);
   const audio = useAudio();
+  const t = useT();
 
   useEffect(() => { tIdxRef.current = tableIdx; }, [tableIdx]);
   useEffect(() => { maxValRef.current = maxVal; }, [maxVal]);
@@ -129,8 +131,8 @@ export function useGameState(): GameState & GameHandlers {
     }
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setTimeLeft(t => {
-        const next = t - 1;
+      setTimeLeft(prev => {
+        const next = prev - 1;
         const now = Date.now();
         if (now - lastTick.current > 850) {
           lastTick.current = now;
@@ -141,7 +143,7 @@ export function useGameState(): GameState & GameHandlers {
           clearInterval(timerRef.current!);
           audio.timeUp();
           setAnswered(true); setTimeUp(true);
-          setFeedback("Tijd is op! Het groene antwoord is goed.");
+          setFeedback(t.game.feedback.timeUp);
           setStreak(0); setTotalCount(c => c + 1);
           return 0;
         }
@@ -159,12 +161,13 @@ export function useGameState(): GameState & GameHandlers {
       const { score: newScore, newStreak, isCombo } = calcScore(score, streak);
       setScore(newScore); setStreak(newStreak);
       setCorrectCount(c => c + 1);
-      setFeedback(MSGS[ri(0, MSGS.length - 1)] + (isCombo ? " Combo! +2 ⭐" : " +1 ⭐"));
+      const msgs = t.game.feedback.correct;
+      setFeedback(msgs[ri(0, msgs.length - 1)] + (isCombo ? ` ${t.game.feedback.combo}` : " +1 ⭐"));
       if (newStreak % 3 === 0) { setConfetti(true); audio.fanfare(); setTimeout(() => setConfetti(false), 3500); }
       else audio.correct();
     } else {
       setStreak(0); audio.wrong();
-      setFeedback("Bijna! Het groene antwoord is goed.");
+      setFeedback(t.game.feedback.wrong);
     }
   }
 

@@ -2,9 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { speakWord } from "@/lib/tts";
+
 import { ZINNEN } from "@/content/nl/sentences";
 import { ri } from "@/lib/gameLogic";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
+
 import type { Zin } from "@/content/nl/sentences";
 
 interface Props {
@@ -13,7 +16,9 @@ interface Props {
   autoAdvance?: number;
 }
 
-export default function Woordvolgorde({ onAnswer, onStop, autoAdvance = 3 }: Props) {
+export default function Woordvolgorde({
+onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [zin,     setZin]     = useState<Zin>(() => ZINNEN[ri(0, ZINNEN.length - 1)]);
   const [bank,    setBank]    = useState<string[]>(() => [...ZINNEN[ri(0, ZINNEN.length - 1)].words].sort(() => Math.random() - 0.5));
   const [placed,  setPlaced]  = useState<string[]>([]);
@@ -109,9 +114,13 @@ export default function Woordvolgorde({ onAnswer, onStop, autoAdvance = 3 }: Pro
             Volgende →
             {countdown > 0 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">{countdown}</span>}
           </button>
-          <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">Stop 🏁</button>
+          <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">{t.general.stop}</button>
         </div>
       )}
     </div>
   );
 }
+
+
+
+

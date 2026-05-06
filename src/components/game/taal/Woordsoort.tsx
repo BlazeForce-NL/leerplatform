@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { speakWord } from "@/lib/tts";
+
 import { WORD_CATEGORIES, DISTRACTORS } from "@/content/nl/categories";
 import { ri } from "@/lib/gameLogic";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onAnswer: (correct: boolean) => void;
@@ -39,7 +41,9 @@ function makeRound(excludeCategory?: string): Round {
   };
 }
 
-export default function Woordsoort({ onAnswer, onStop, autoAdvance = 3 }: Props) {
+export default function Woordsoort({
+onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [round,    setRound]    = useState<Round>(() => makeRound());
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [checked,  setChecked]  = useState(false);
@@ -123,10 +127,14 @@ export default function Woordsoort({ onAnswer, onStop, autoAdvance = 3 }: Props)
               Volgende →
               {countdown > 0 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">{countdown}</span>}
             </button>
-            <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">Stop 🏁</button>
+            <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">{t.general.stop}</button>
           </div>
         </div>
       )}
     </div>
   );
 }
+
+
+
+

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { SKILL_GRAPH, type SkillLevel } from "@/lib/skillGraph";
 import { createLocalMasteryStore, levelStars } from "@/lib/mastery";
 import { getPlayerId } from "@/lib/playerId";
+import { useT } from "@/lib/i18n";
+import LocaleSwitcher from "@/components/LocaleSwitcher";
 
 interface Props {
   onSelectLevel: (levelId: string) => void;
@@ -41,6 +43,7 @@ function buildLevelData(domainId: string): Record<string, LevelWithStatus> {
 }
 
 export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Props) {
+  const t = useT();
   const [activeDomain, setActiveDomain] = useState("rekenen");
   const [levelData, setLevelData] = useState<Record<string, LevelWithStatus>>(
     () => buildLevelData("rekenen"),
@@ -56,6 +59,11 @@ export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Prop
 
   return (
     <div className="min-h-dvh bg-game-bg font-sans px-3 py-4 md:px-6">
+      {/* Taalwisselaar — altijd bovenaan, prominent */}
+      <div className="flex justify-end max-w-2xl mx-auto mb-2">
+        <LocaleSwitcher compact />
+      </div>
+
       {/* Domein-switcher */}
       <div className="flex justify-center gap-2 mb-4 max-w-2xl mx-auto">
         {SKILL_GRAPH.domains.map(d => (
@@ -69,35 +77,37 @@ export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Prop
                 : "bg-white border-gray-300 text-gray-600"
             }`}
           >
-            {d.emoji} {d.name}
+            {d.emoji} {d.id === "rekenen" ? t.levels.math.replace("🔢 ", "") : t.levels.language.replace("📖 ", "")}
           </button>
         ))}
       </div>
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4 max-w-2xl mx-auto">
-        <h1 className="text-xl font-bold text-gray-800">{domain.emoji} {domain.name}</h1>
+        <h1 className="text-xl font-bold text-gray-800">
+          {domain.emoji} {domain.id === "rekenen" ? t.levels.math.replace("🔢 ", "") : t.levels.language.replace("📖 ", "")}
+        </h1>
         <div className="flex gap-2">
           <button
             type="button"
             onPointerUp={() => setLevelData(buildLevelData(activeDomain))}
             className="px-2.5 py-1.5 rounded-full border-2 border-gray-200 bg-white text-gray-400 text-xs font-semibold cursor-pointer"
-            aria-label="Kaart vernieuwen"
-          >↺</button>
+            aria-label={t.levels.refresh}
+          >{t.levels.refresh}</button>
           <button
             type="button"
             onPointerUp={onBadges}
             className="px-3 py-1.5 rounded-full border-2 border-brand-yellow bg-white text-gray-700 text-xs font-semibold cursor-pointer hover:bg-brand-yellow/10"
-            aria-label="Mijn badges bekijken"
+            aria-label={t.levels.badges}
           >
-            🏅 Badges
+            {t.levels.badges}
           </button>
           <button
             type="button"
             onPointerUp={onVrijSpelen}
             className="px-3 py-1.5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-xs font-semibold cursor-pointer"
           >
-            Vrij spelen
+            {t.levels.freePlay}
           </button>
         </div>
       </div>
@@ -128,10 +138,10 @@ export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Prop
 
       {/* Legenda */}
       <div className="flex justify-center gap-4 mt-8 text-xs text-gray-400">
-        <span>🔒 Vergrendeld</span>
-        <span>▶ Ontgrendeld</span>
-        <span>⭐ Actief niveau</span>
-        <span>✅ Beheerst</span>
+        <span>🔒 {t.levels.locked}</span>
+        <span>▶ {t.levels.unlocked}</span>
+        <span>⭐ {t.levels.active}</span>
+        <span>✅ {t.levels.mastered}</span>
       </div>
     </div>
   );
@@ -139,6 +149,7 @@ export default function LevelMap({ onSelectLevel, onVrijSpelen, onBadges }: Prop
 
 function LevelCard({ data, onSelect }: { data: LevelWithStatus; onSelect: () => void }) {
   const { level, status, mastery } = data;
+  const t = useT();
 
   const styles: Record<LevelStatus, string> = {
     locked:   "bg-gray-100 border-gray-200 text-gray-400 cursor-default",
@@ -162,7 +173,7 @@ function LevelCard({ data, onSelect }: { data: LevelWithStatus; onSelect: () => 
       type="button"
       onPointerUp={onSelect}
       disabled={status === "locked"}
-      aria-label={`${level.name} — ${status === "locked" ? "vergrendeld" : status === "mastered" ? `beheerst, ${stars} ster${stars !== 1 ? "ren" : ""}` : "actief"}`}
+      aria-label={`${level.name} — ${status === "locked" ? t.levels.locked : status === "mastered" ? `${t.levels.mastered}, ${stars}★` : t.levels.active}`}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all ${styles[status]}`}
     >
       <span className="text-xl w-7 flex-none" aria-hidden="true">{icons[status]}</span>

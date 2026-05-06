@@ -5,6 +5,8 @@ import { speakWord, speakPhoneme } from "@/lib/tts";
 import { getWordsByDifficulty } from "@/content/nl/words";
 import { ri } from "@/lib/gameLogic";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
+
 import LetterBlock from "./LetterBlock";
 import type { TaalWord } from "@/lib/taalContent";
 
@@ -27,7 +29,9 @@ function makeChoices(correct: string, allLetters: string[]): string[] {
 
 const ALL_LETTERS = "abcdefghijklmnopqrstuvwxyz".split("");
 
-export default function Eindletter({ wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+export default function Eindletter({
+wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [word,     setWord]     = useState<TaalWord>(() => pickWord(wordDifficulty));
   const [choices,  setChoices]  = useState<string[]>(() => { const w = pickWord(wordDifficulty); return makeChoices(w.word.slice(-1), ALL_LETTERS); });
   const [selected, setSelected] = useState<string | null>(null);
@@ -107,9 +111,13 @@ export default function Eindletter({ wordDifficulty, onAnswer, onStop, autoAdvan
             Volgende →
             {countdown > 0 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">{countdown}</span>}
           </button>
-          <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">Stop 🏁</button>
+          <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">{t.general.stop}</button>
         </div>
       )}
     </div>
   );
 }
+
+
+
+

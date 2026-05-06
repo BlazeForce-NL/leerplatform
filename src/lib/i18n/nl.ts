@@ -23,6 +23,17 @@ export const nl: Messages = {
     levelMap: "Niveaukaart",
     difficulty: "Moeilijkheid",
     autoNext: "Automatisch door",
+    modeLabel: "Modus",
+    whichTable: "Welke tafel?",
+    orderLabel: "Volgorde?",
+    allRandom: "Alle willekeurig",
+    inOrder: "Op volgorde",
+    random: "Willekeurig",
+    nextLabel: "Volgende:",
+    correct: "goed",
+    of: "van",
+    points: "punten",
+    anonymous: "Anoniem",
   },
 
   taal: {
@@ -37,6 +48,7 @@ export const nl: Messages = {
       woordtypist: "⌨️ Woordtypist",
       woordvolgorde: "🔀 Woordvolgorde",
       woordsoort: "🗂️ Woordsoort",
+      schrijven: "✏️ Schrijven",
     },
     instructions: {
       letters: "Welke letter hoor je?",
@@ -109,6 +121,22 @@ export const nl: Messages = {
     notYet: "Nog te behalen",
   },
 
+  summary: {
+    title: "Sessie afgerond!",
+    newHigh: "🏆 Nieuw record!",
+    correct: "goed",
+    of: "van",
+    play: "Opnieuw spelen",
+    leaderboard: "Scorebord",
+    levelMap: "← Niveaukaart",
+  },
+
+  scoreboard: {
+    title: "Scorebord",
+    noScores: "Nog geen scores.",
+    close: "Sluiten",
+  },
+
   general: {
     stop: "Stop 🏁",
     back: "← Terug",
@@ -116,5 +144,9 @@ export const nl: Messages = {
     auto: "Automatisch",
     none: "Geen",
     difficulty: { easy: "3 letters", medium: "4 letters", hard: "5 letters" },
+    timer: { none: "Geen" },
+    letterSet: "Letter-set",
+    activity: "Activiteit",
+    world: "Wereld",
   },
 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Badge } from "@/lib/mastery";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   badges: Badge[];
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function BadgeUnlocked({ badges, onDone }: Props) {
+  const t = useT();
   const [idx, setIdx]         = useState(0);
   const [visible, setVisible] = useState(true);
 
@@ -61,7 +63,7 @@ export default function BadgeUnlocked({ badges, onDone }: Props) {
         </div>
 
         <div className="text-xs font-bold uppercase tracking-widest text-brand-blue mb-1">
-          Badge behaald! 🎉
+          {t.badges.unlocked}
         </div>
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">{badge.name}</h2>
         <p className="text-gray-500 text-sm mb-6">{badge.description}</p>
@@ -82,7 +84,7 @@ export default function BadgeUnlocked({ badges, onDone }: Props) {
           onPointerUp={onDone}
           className="w-full py-3 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md"
         >
-          {idx + 1 < badges.length ? `Volgende (${idx + 1}/${badges.length}) →` : "Top! Verder spelen 🚀"}
+          {idx + 1 < badges.length ? `${t.game.next} (${idx + 1}/${badges.length})` : `🚀 ${t.summary.play}`}
         </button>
 
         {/* Voortgang bij meerdere badges */}

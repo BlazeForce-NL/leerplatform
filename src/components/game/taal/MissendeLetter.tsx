@@ -2,9 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { speakWord } from "@/lib/tts";
+
 import { getWordsByDifficulty } from "@/content/nl/words";
 import { ri } from "@/lib/gameLogic";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
+
 import LetterBlock from "./LetterBlock";
 import type { TaalWord } from "@/lib/taalContent";
 
@@ -64,7 +67,9 @@ function makeRound(difficulty: 1 | 2 | 3 | 4, exclude?: string): Round {
   return { word, missingIdx, missingLetter, choices, isVowelRound };
 }
 
-export default function MissendeLetter({ wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+export default function MissendeLetter({
+wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [round,    setRound]    = useState<Round>(() => makeRound(wordDifficulty));
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -186,3 +191,7 @@ export default function MissendeLetter({ wordDifficulty, onAnswer, onStop, autoA
     </div>
   );
 }
+
+
+
+

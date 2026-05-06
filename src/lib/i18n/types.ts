@@ -32,6 +32,17 @@ export interface Messages {
     levelMap: string;
     difficulty: string;
     autoNext: string;
+    modeLabel: string;
+    whichTable: string;
+    orderLabel: string;
+    allRandom: string;
+    inOrder: string;
+    random: string;
+    nextLabel: string;
+    correct: string;
+    of: string;
+    points: string;
+    anonymous: string;
   };
 
   // ── Taal ─────────────────────────────────────────────────────────────────
@@ -47,6 +58,7 @@ export interface Messages {
       woordtypist: string;
       woordvolgorde: string;
       woordsoort: string;
+      schrijven: string;
     };
     instructions: {
       letters: string;
@@ -123,6 +135,24 @@ export interface Messages {
     notYet: string;
   };
 
+  // ── Session summary ───────────────────────────────────────────────────────
+  summary: {
+    title: string;
+    newHigh: string;
+    correct: string;
+    of: string;
+    play: string;
+    leaderboard: string;
+    levelMap: string;
+  };
+
+  // ── Scoreboard ────────────────────────────────────────────────────────────
+  scoreboard: {
+    title: string;
+    noScores: string;
+    close: string;
+  };
+
   // ── General ──────────────────────────────────────────────────────────────
   general: {
     stop: string;
@@ -131,5 +161,9 @@ export interface Messages {
     auto: string;
     none: string;
     difficulty: { easy: string; medium: string; hard: string };
+    timer: { none: string };
+    letterSet: string;
+    activity: string;
+    world: string;
   };
 }

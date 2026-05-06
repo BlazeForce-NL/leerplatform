@@ -2,9 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { speakWord } from "@/lib/tts";
+
 import { getWordsByDifficulty } from "@/content/nl/words";
 import { ri } from "@/lib/gameLogic";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
+
 import type { TaalWord } from "@/lib/taalContent";
 
 interface Props {
@@ -28,7 +31,9 @@ function makeChoices(correct: number): number[] {
   return [...set].sort(() => Math.random() - 0.5);
 }
 
-export default function KlankenTellen({ wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+export default function KlankenTellen({
+wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [word,     setWord]     = useState<TaalWord>(() => pickWord(wordDifficulty));
   const [choices,  setChoices]  = useState<number[]>(() => makeChoices(pickWord(wordDifficulty).segments.length));
   const [selected, setSelected] = useState<number | null>(null);
@@ -116,9 +121,13 @@ export default function KlankenTellen({ wordDifficulty, onAnswer, onStop, autoAd
             Volgende →
             {countdown > 0 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">{countdown}</span>}
           </button>
-          <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">Stop 🏁</button>
+          <button type="button" onPointerUp={onStop} className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer">{t.general.stop}</button>
         </div>
       )}
     </div>
   );
 }
+
+
+
+

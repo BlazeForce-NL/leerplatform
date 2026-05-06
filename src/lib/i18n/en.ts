@@ -23,6 +23,17 @@ export const en: Messages = {
     levelMap: "Level map",
     difficulty: "Difficulty",
     autoNext: "Auto advance",
+    modeLabel: "Mode",
+    whichTable: "Which table?",
+    orderLabel: "Order?",
+    allRandom: "All random",
+    inOrder: "In order",
+    random: "Random",
+    nextLabel: "Next:",
+    correct: "correct",
+    of: "of",
+    points: "points",
+    anonymous: "Anonymous",
   },
 
   taal: {
@@ -37,6 +48,7 @@ export const en: Messages = {
       woordtypist: "⌨️ Word typist",
       woordvolgorde: "🔀 Word order",
       woordsoort: "🗂️ Word sort",
+      schrijven: "✏️ Writing",
     },
     instructions: {
       letters: "Which letter do you hear?",
@@ -109,6 +121,22 @@ export const en: Messages = {
     notYet: "Not yet earned",
   },
 
+  summary: {
+    title: "Session complete!",
+    newHigh: "🏆 New high score!",
+    correct: "correct",
+    of: "of",
+    play: "Play again",
+    leaderboard: "Leaderboard",
+    levelMap: "← Level map",
+  },
+
+  scoreboard: {
+    title: "Leaderboard",
+    noScores: "No scores yet.",
+    close: "Close",
+  },
+
   general: {
     stop: "Stop 🏁",
     back: "← Back",
@@ -116,5 +144,9 @@ export const en: Messages = {
     auto: "Automatic",
     none: "None",
     difficulty: { easy: "3 letters", medium: "4 letters", hard: "5 letters" },
+    timer: { none: "None" },
+    letterSet: "Letter set",
+    activity: "Activity",
+    world: "World",
   },
 };

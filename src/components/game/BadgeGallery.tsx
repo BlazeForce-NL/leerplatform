@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { getEarnedBadges, getAllBadgeDefs, type Badge } from "@/lib/mastery";
 import { getPlayerId } from "@/lib/playerId";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onBack: () => void;
 }
 
 export default function BadgeGallery({ onBack }: Props) {
+  const t = useT();
   const [earned] = useState<Badge[]>(
     () => typeof window !== "undefined" ? getEarnedBadges(getPlayerId()) : [],
   );
@@ -30,16 +32,16 @@ export default function BadgeGallery({ onBack }: Props) {
           ←
         </button>
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">Mijn badges</h1>
-          <p className="text-xs text-gray-400">{earnedCount} van {all.length} behaald</p>
+          <h1 className="text-xl font-extrabold text-gray-900">{t.badges.title}</h1>
+          <p className="text-xs text-gray-400">{earnedCount} {t.badges.earned} / {all.length}</p>
         </div>
       </div>
 
       {/* Voortgangs-balk */}
       <div className="max-w-xl mx-auto mb-6">
         <div className="flex justify-between text-xs text-gray-400 mb-1">
-          <span>{earnedCount} behaald</span>
-          <span>{all.length - earnedCount} te gaan</span>
+          <span>{earnedCount} {t.badges.earned}</span>
+          <span>{all.length - earnedCount} {t.badges.toGo}</span>
         </div>
         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
@@ -79,8 +81,10 @@ interface CardProps {
 }
 
 function BadgeCard({ emoji, name, description, isEarned, earnedAt }: CardProps) {
+  const t = useT();
+  const locale = t.locale === "en" ? "en-GB" : "nl-NL";
   const date = earnedAt
-    ? new Date(earnedAt).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })
+    ? new Date(earnedAt).toLocaleDateString(locale, { day: "numeric", month: "short" })
     : null;
 
   return (
@@ -90,7 +94,7 @@ function BadgeCard({ emoji, name, description, isEarned, earnedAt }: CardProps) 
           ? "bg-white border-brand-yellow shadow-md"
           : "bg-gray-50 border-gray-200 opacity-60"
       }`}
-      aria-label={`${name}${isEarned ? ` — behaald${date ? ` op ${date}` : ""}` : " — nog niet behaald"}`}
+      aria-label={`${name}${isEarned ? ` — ${earnedAt ? date : ""}` : ""}`}
     >
       {/* Emoji */}
       <div className={`text-4xl ${isEarned ? "animate-pop-in" : "grayscale"}`}>
@@ -104,7 +108,7 @@ function BadgeCard({ emoji, name, description, isEarned, earnedAt }: CardProps) 
 
       {/* Omschrijving */}
       <div className="text-xs text-gray-400 leading-snug">
-        {isEarned ? description : "Nog te behalen"}
+        {isEarned ? description : t.badges.notYet}
       </div>
 
       {/* Datum */}

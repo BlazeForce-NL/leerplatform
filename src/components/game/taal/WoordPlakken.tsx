@@ -3,10 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import LetterBlock from "./LetterBlock";
 import { speakWord, speakSegment } from "@/lib/tts";
+
 import { getWordsByDifficulty } from "@/content/nl/words";
 import { ri } from "@/lib/gameLogic";
 import type { TaalWord } from "@/lib/taalContent";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
+
 
 interface Props {
   wordDifficulty: 1 | 2 | 3 | 4;
@@ -26,7 +29,9 @@ function shuffle<T>(arr: T[]): T[] {
 
 // ── Outer: beheert welk woord actief is ──────────────────────────────────────
 
-export default function WoordPlakken({ wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+export default function WoordPlakken({
+wordDifficulty, onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [word, setWord] = useState<TaalWord>(() => pickWord(wordDifficulty));
 
   const nextWord = useCallback(() => {
@@ -56,6 +61,7 @@ interface RoundProps {
 }
 
 function PlakkenRound({ word, autoAdvance, onAnswer, onNext, onStop }: RoundProps) {
+  const t = useT();
   const [bank,    setBank]    = useState<string[]>(() => shuffle([...word.segments]));
   const [placed,  setPlaced]  = useState<string[]>([]);
   const [checked, setChecked] = useState(false);
@@ -177,7 +183,7 @@ function PlakkenRound({ word, autoAdvance, onAnswer, onNext, onStop }: RoundProp
           <div className="flex gap-3">
             <button type="button" onPointerUp={onNext}
               className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md flex items-center gap-2">
-              Volgend woord →
+              {t.taal.nextWord}
               {countdown > 0 && (
                 <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">
                   {countdown}
@@ -194,3 +200,7 @@ function PlakkenRound({ word, autoAdvance, onAnswer, onNext, onStop }: RoundProp
     </div>
   );
 }
+
+
+
+

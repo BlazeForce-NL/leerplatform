@@ -5,6 +5,7 @@ import LetterBlock from "./LetterBlock";
 import { speakPhoneme } from "@/lib/tts";
 import { ri } from "@/lib/gameLogic";
 import { useAutoAdvance } from "@/hooks/useAutoAdvance";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   letterSet: string[];
@@ -33,6 +34,7 @@ function makeRound(letterSet: string[], known: string[]): Round {
 }
 
 export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer, onStop, autoAdvance = 3 }: Props) {
+  const t = useT();
   const [round,    setRound]    = useState<Round>(() => makeRound(letterSet, allKnownLetters));
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -80,14 +82,14 @@ export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer,
   return (
     <div className="flex flex-col items-center gap-6 px-4 py-6 max-w-md mx-auto">
       {/* Instructie */}
-      <p className="text-sm font-semibold text-gray-500">Welke letter hoor je?</p>
+      <p className="text-sm font-semibold text-gray-500">{t.taal.instructions.letters}</p>
 
       {/* Luister-knop */}
       <button
         type="button"
         onPointerUp={() => speakPhoneme(round.target)}
         className="w-24 h-24 rounded-full bg-brand-blue border-none text-white text-4xl shadow-lg cursor-pointer active:scale-95 transition-transform"
-        aria-label={`Speel klank opnieuw`}
+        aria-label={t.taal.listen}
       >
         🔊
       </button>
@@ -121,7 +123,7 @@ export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer,
             onPointerUp={nextRound}
             className="py-3 px-8 rounded-full bg-brand-blue border-none text-white text-base font-bold cursor-pointer shadow-md flex items-center gap-2"
           >
-            Volgende →
+            {t.taal.nextWord.replace(" woord", "").replace(" word", "")}
             {countdown > 0 && (
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-brand-blue text-sm font-extrabold tabular-nums">
                 {countdown}
@@ -133,7 +135,7 @@ export default function LetterHerkenning({ letterSet, allKnownLetters, onAnswer,
             onPointerUp={onStop}
             className="py-3 px-5 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm font-semibold cursor-pointer"
           >
-            Stop 🏁
+            {t.general.stop}
           </button>
         </div>
       )}

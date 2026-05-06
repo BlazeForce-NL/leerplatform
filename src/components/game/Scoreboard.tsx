@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ScoreEntry, catLabel } from "@/lib/gameLogic";
+import { useT } from "@/lib/i18n";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 const HEADING_ID = "scoreboard-heading";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default function Scoreboard({ allScores, onClose }: Props) {
+  const t = useT();
   const cats = Object.keys(allScores).sort();
   const [cat, setCat] = useState(cats[0] ?? "");
   const entries = (allScores[cat] ?? []).slice().sort((a, b) => b.score - a.score).slice(0, 10);
@@ -60,16 +62,16 @@ export default function Scoreboard({ allScores, onClose }: Props) {
       <div ref={modalRef} className="bg-white rounded-3xl px-4 py-5 w-full max-w-[440px] max-h-[80vh] overflow-y-auto">
 
         <div className="flex justify-between items-center mb-3.5">
-          <div id={HEADING_ID} className="text-xl font-bold">🏆 Highscores</div>
+          <div id={HEADING_ID} className="text-xl font-bold">🏆 {t.scoreboard.title}</div>
           <button type="button"
             onPointerUp={onClose}
             className="border-none bg-transparent text-[22px] cursor-pointer text-gray-400 hover:text-gray-700 min-h-touch min-w-[44px]"
-            aria-label="Scorebord sluiten"
+            aria-label={t.general.close}
           >✕</button>
         </div>
 
         {cats.length === 0 && (
-          <div className="text-gray-400 text-center py-5">Nog geen scores opgeslagen.</div>
+          <div className="text-gray-400 text-center py-5">{t.scoreboard.noScores}</div>
         )}
 
         {cats.length > 0 && (
@@ -79,7 +81,7 @@ export default function Scoreboard({ allScores, onClose }: Props) {
                 <button type="button"
                   key={c}
                   onPointerUp={() => setCat(c)}
-                  aria-pressed={cat === c ? "true" : "false"}
+                  aria-pressed={cat === c}
                   className={`px-3 py-1 min-h-touch rounded-2xl border-2 font-semibold text-xs cursor-pointer transition-colors ${
                     cat === c
                       ? "border-brand-blue bg-brand-blue text-white"
@@ -94,7 +96,7 @@ export default function Scoreboard({ allScores, onClose }: Props) {
             <div className="text-xs font-semibold text-gray-500 mb-2" aria-live="polite">{catLabel(cat)}</div>
 
             {entries.length === 0 && (
-              <div className="text-gray-400 text-sm">Nog geen scores.</div>
+              <div className="text-gray-400 text-sm">{t.scoreboard.noScores}</div>
             )}
 
             <ol aria-label={`Scores voor ${catLabel(cat)}`}>
@@ -108,7 +110,7 @@ export default function Scoreboard({ allScores, onClose }: Props) {
                   </span>
                   <div className="flex-1">
                     <div className="font-bold text-[15px]">{e.player}</div>
-                    <div className="text-[11px] text-gray-500">{e.correct}/{e.total} goed · {e.date}</div>
+                    <div className="text-[11px] text-gray-500">{e.correct}/{e.total} {t.game.correct} · {e.date}</div>
                   </div>
                   <div className="text-[22px] font-extrabold text-brand-blue" aria-label={`${e.score} punten`}>{e.score}</div>
                 </li>

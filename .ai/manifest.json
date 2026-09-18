@@ -1,0 +1,288 @@
+{
+  "composition": {
+    "baselines": [
+      "repository",
+      "typescript-app"
+    ],
+    "removed": {}
+  },
+  "files": [
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:1c90d639d90b2ab782df3d748bcf4fd13eec39f9942aa02ed4cee09dd11f64a9",
+      "ownership": "generated",
+      "path": ".ai/generated/claude/skills/development/api-design/SKILL.md",
+      "projection": "staging",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.api-design"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:ac7419d6452e80500d2f3bf1524293ff8a947c32914d5247ee6f2848ab815799",
+      "ownership": "generated",
+      "path": ".ai/generated/claude/skills/development/code-review/SKILL.md",
+      "projection": "staging",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.code-review"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:945a3eb2a3d8f1f93a0a32d5a8e744bac8c75a944ff7748ba6e5411ee20a6e29",
+      "ownership": "generated",
+      "path": ".ai/generated/claude/skills/development/testing-strategy/SKILL.md",
+      "projection": "staging",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.testing-strategy"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:8d99c153232a9c53075f5d1a2c2b556eefdc9ffe2c17cc31bbdc2f872c2019f2",
+      "ownership": "generated",
+      "path": ".ai/generated/claude/skills/security/application-security-review/SKILL.md",
+      "projection": "staging",
+      "runtime": "claude",
+      "source_capabilities": [
+        "security.application-security-review"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:5b86df5fee9c8840247ea8ae924d1de6680d39a397dd383992d906eb74ef1652",
+      "ownership": "generated",
+      "path": ".ai/generated/claude/standards/development/documentation-as-code/STANDARD.md",
+      "projection": "staging",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.documentation-as-code"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:b759d943de158a95d14e26267b5834dcda68d677366b4cfa3c73e273e4fcd727",
+      "ownership": "generated",
+      "path": ".ai/generated/claude/standards/development/git-governance/STANDARD.md",
+      "projection": "staging",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.git-governance"
+      ]
+    },
+    {
+      "adapter": "codex",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:9fb7a934420d2737a0564364eb1b141a0dea9ab7a467e35ec26de42cc03a2553",
+      "ownership": "generated",
+      "path": ".ai/generated/codex/AGENTS.md",
+      "projection": "staging",
+      "runtime": "codex",
+      "source_capabilities": [
+        "development.api-design",
+        "development.code-review",
+        "development.documentation-as-code",
+        "development.git-governance",
+        "development.testing-strategy",
+        "security.application-security-review"
+      ]
+    },
+    {
+      "adapter": "copilot",
+      "adapter_version": "0.1.0",
+      "content_hash": "sha256:24cc48ec595b74fc06c9426d4ec073b0eadaab59f2fb46ae9e15cbd8995b871d",
+      "ownership": "generated",
+      "path": ".ai/generated/copilot/copilot-instructions.md",
+      "projection": "staging",
+      "runtime": "copilot",
+      "source_capabilities": [
+        "development.api-design",
+        "development.code-review",
+        "development.documentation-as-code",
+        "development.git-governance",
+        "development.testing-strategy",
+        "security.application-security-review"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:612061e5064843eb4f75a754406617bdc701c414562a9ad7418e49d5d7e3bc43",
+      "ownership": "generated",
+      "path": ".claude/CLAUDE.md",
+      "projection": "native",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.api-design",
+        "development.code-review",
+        "development.documentation-as-code",
+        "development.git-governance",
+        "development.testing-strategy",
+        "security.application-security-review"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:1c90d639d90b2ab782df3d748bcf4fd13eec39f9942aa02ed4cee09dd11f64a9",
+      "ownership": "generated",
+      "path": ".claude/skills/development.api-design/SKILL.md",
+      "projection": "native",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.api-design"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:ac7419d6452e80500d2f3bf1524293ff8a947c32914d5247ee6f2848ab815799",
+      "ownership": "generated",
+      "path": ".claude/skills/development.code-review/SKILL.md",
+      "projection": "native",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.code-review"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:945a3eb2a3d8f1f93a0a32d5a8e744bac8c75a944ff7748ba6e5411ee20a6e29",
+      "ownership": "generated",
+      "path": ".claude/skills/development.testing-strategy/SKILL.md",
+      "projection": "native",
+      "runtime": "claude",
+      "source_capabilities": [
+        "development.testing-strategy"
+      ]
+    },
+    {
+      "adapter": "claude",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:8d99c153232a9c53075f5d1a2c2b556eefdc9ffe2c17cc31bbdc2f872c2019f2",
+      "ownership": "generated",
+      "path": ".claude/skills/security.application-security-review/SKILL.md",
+      "projection": "native",
+      "runtime": "claude",
+      "source_capabilities": [
+        "security.application-security-review"
+      ]
+    },
+    {
+      "adapter": "copilot",
+      "adapter_version": "0.1.0",
+      "content_hash": "sha256:24cc48ec595b74fc06c9426d4ec073b0eadaab59f2fb46ae9e15cbd8995b871d",
+      "ownership": "generated",
+      "path": ".github/copilot-instructions.md",
+      "projection": "native",
+      "runtime": "copilot",
+      "source_capabilities": [
+        "development.api-design",
+        "development.code-review",
+        "development.documentation-as-code",
+        "development.git-governance",
+        "development.testing-strategy",
+        "security.application-security-review"
+      ]
+    },
+    {
+      "adapter": "codex",
+      "adapter_version": "0.2.0",
+      "content_hash": "sha256:9fb7a934420d2737a0564364eb1b141a0dea9ab7a467e35ec26de42cc03a2553",
+      "ownership": "generated",
+      "path": "AGENTS.md",
+      "projection": "native",
+      "runtime": "codex",
+      "source_capabilities": [
+        "development.api-design",
+        "development.code-review",
+        "development.documentation-as-code",
+        "development.git-governance",
+        "development.testing-strategy",
+        "security.application-security-review"
+      ]
+    }
+  ],
+  "profile": {
+    "digest": "sha256:bf32f8011e680692f418628e9544b09b0342403253b4f7b2c93c1c9e9b16fe97",
+    "path": "projects/leerplatform.yaml"
+  },
+  "project": "leerplatform",
+  "resolved": [
+    {
+      "contributed_by": [
+        "typescript-app"
+      ],
+      "id": "development.api-design",
+      "reason": "root",
+      "status": "active",
+      "type": "skill",
+      "version": "1.0.1"
+    },
+    {
+      "contributed_by": [
+        "repository"
+      ],
+      "id": "development.code-review",
+      "reason": "root",
+      "status": "active",
+      "type": "skill",
+      "version": "2.0.0"
+    },
+    {
+      "contributed_by": [
+        "repository"
+      ],
+      "id": "development.documentation-as-code",
+      "reason": "root",
+      "status": "active",
+      "type": "standard",
+      "version": "1.0.0"
+    },
+    {
+      "contributed_by": [
+        "repository"
+      ],
+      "id": "development.git-governance",
+      "reason": "root",
+      "status": "active",
+      "type": "standard",
+      "version": "1.0.0"
+    },
+    {
+      "contributed_by": [
+        "typescript-app"
+      ],
+      "id": "development.testing-strategy",
+      "reason": "root",
+      "status": "active",
+      "type": "skill",
+      "version": "1.0.0"
+    },
+    {
+      "contributed_by": [
+        "typescript-app"
+      ],
+      "id": "security.application-security-review",
+      "reason": "root",
+      "status": "active",
+      "type": "skill",
+      "version": "1.0.0"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "commit": "f33fba41fbc2507e08e78554c0a7a9eed1b958ff",
+    "repository": "BlazeForce-NL/ai-capabilities"
+  }
+}

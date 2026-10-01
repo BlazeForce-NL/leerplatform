@@ -107,13 +107,13 @@ Loosening any mandatory rule here directly weakens the reliability guarantee tha
 ## development.git-governance
 
 Canonical type: `standard`  
-Version: `1.0.0`
+Version: `1.0.1`
 
 ---
 id: development.git-governance
 name: Git Governance
 type: standard
-version: 1.0.0
+version: 1.0.1
 status: active
 summary: >-
   Defines reusable Git repository governance rules for commit clarity, branch hygiene,
@@ -126,6 +126,7 @@ tags:
   - governance
   - repository
   - versioning
+  - release
 risk: low
 owners:
   - bart-doggen

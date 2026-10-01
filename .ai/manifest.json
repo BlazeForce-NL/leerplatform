@@ -9,7 +9,7 @@
   "files": [
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
+      "adapter_version": "0.3.0",
       "content_hash": "sha256:1c90d639d90b2ab782df3d748bcf4fd13eec39f9942aa02ed4cee09dd11f64a9",
       "ownership": "generated",
       "path": ".ai/generated/claude/skills/development/api-design/SKILL.md",
@@ -21,7 +21,7 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
+      "adapter_version": "0.3.0",
       "content_hash": "sha256:ac7419d6452e80500d2f3bf1524293ff8a947c32914d5247ee6f2848ab815799",
       "ownership": "generated",
       "path": ".ai/generated/claude/skills/development/code-review/SKILL.md",
@@ -33,7 +33,7 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
+      "adapter_version": "0.3.0",
       "content_hash": "sha256:945a3eb2a3d8f1f93a0a32d5a8e744bac8c75a944ff7748ba6e5411ee20a6e29",
       "ownership": "generated",
       "path": ".ai/generated/claude/skills/development/testing-strategy/SKILL.md",
@@ -45,7 +45,7 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
+      "adapter_version": "0.3.0",
       "content_hash": "sha256:8d99c153232a9c53075f5d1a2c2b556eefdc9ffe2c17cc31bbdc2f872c2019f2",
       "ownership": "generated",
       "path": ".ai/generated/claude/skills/security/application-security-review/SKILL.md",
@@ -57,7 +57,7 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
+      "adapter_version": "0.3.0",
       "content_hash": "sha256:5b86df5fee9c8840247ea8ae924d1de6680d39a397dd383992d906eb74ef1652",
       "ownership": "generated",
       "path": ".ai/generated/claude/standards/development/documentation-as-code/STANDARD.md",
@@ -69,8 +69,8 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
-      "content_hash": "sha256:b759d943de158a95d14e26267b5834dcda68d677366b4cfa3c73e273e4fcd727",
+      "adapter_version": "0.3.0",
+      "content_hash": "sha256:cbdfe5242425e9fe3243ca0d127693a757abb72f98b73da681bb86de741f0ca8",
       "ownership": "generated",
       "path": ".ai/generated/claude/standards/development/git-governance/STANDARD.md",
       "projection": "staging",
@@ -82,7 +82,7 @@
     {
       "adapter": "codex",
       "adapter_version": "0.2.0",
-      "content_hash": "sha256:9fb7a934420d2737a0564364eb1b141a0dea9ab7a467e35ec26de42cc03a2553",
+      "content_hash": "sha256:89dd4fedca58c156e260f99dc19e2e26c66656c558a5d1a969c1e23fdbec67f7",
       "ownership": "generated",
       "path": ".ai/generated/codex/AGENTS.md",
       "projection": "staging",
@@ -99,7 +99,7 @@
     {
       "adapter": "copilot",
       "adapter_version": "0.1.0",
-      "content_hash": "sha256:24cc48ec595b74fc06c9426d4ec073b0eadaab59f2fb46ae9e15cbd8995b871d",
+      "content_hash": "sha256:4a4422a157c5448089669541f40ce6758cc069dc5424086d43284a7de72b9d54",
       "ownership": "generated",
       "path": ".ai/generated/copilot/copilot-instructions.md",
       "projection": "staging",
@@ -115,8 +115,8 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
-      "content_hash": "sha256:612061e5064843eb4f75a754406617bdc701c414562a9ad7418e49d5d7e3bc43",
+      "adapter_version": "0.3.0",
+      "content_hash": "sha256:41919a9127626f5d95762d6cae7e424aeff5344d880062ed3912498a1e93bea8",
       "ownership": "generated",
       "path": ".claude/CLAUDE.md",
       "projection": "native",
@@ -132,8 +132,8 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
-      "content_hash": "sha256:1c90d639d90b2ab782df3d748bcf4fd13eec39f9942aa02ed4cee09dd11f64a9",
+      "adapter_version": "0.3.0",
+      "content_hash": "sha256:6867b8526a89ff072a26b758b010f0cbd29e59a000bb16d245ad9174b4dee607",
       "ownership": "generated",
       "path": ".claude/skills/development.api-design/SKILL.md",
       "projection": "native",
@@ -144,8 +144,8 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
-      "content_hash": "sha256:ac7419d6452e80500d2f3bf1524293ff8a947c32914d5247ee6f2848ab815799",
+      "adapter_version": "0.3.0",
+      "content_hash": "sha256:5df0f3d3e5af829d65ab41c829501dba7b49fb2e2512b344cfd8bf21199d8756",
       "ownership": "generated",
       "path": ".claude/skills/development.code-review/SKILL.md",
       "projection": "native",
@@ -156,8 +156,8 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
-      "content_hash": "sha256:945a3eb2a3d8f1f93a0a32d5a8e744bac8c75a944ff7748ba6e5411ee20a6e29",
+      "adapter_version": "0.3.0",
+      "content_hash": "sha256:8b9e063e44eb9dbbb278cd1a4aafa0aa75c76b50619d5030057bd61e83fc7507",
       "ownership": "generated",
       "path": ".claude/skills/development.testing-strategy/SKILL.md",
       "projection": "native",
@@ -168,8 +168,8 @@
     },
     {
       "adapter": "claude",
-      "adapter_version": "0.2.0",
-      "content_hash": "sha256:8d99c153232a9c53075f5d1a2c2b556eefdc9ffe2c17cc31bbdc2f872c2019f2",
+      "adapter_version": "0.3.0",
+      "content_hash": "sha256:d2c488dbde2bdc0283a74546f76f80657a3571bb1d99a31e4856a2740a49e8dc",
       "ownership": "generated",
       "path": ".claude/skills/security.application-security-review/SKILL.md",
       "projection": "native",
@@ -181,7 +181,7 @@
     {
       "adapter": "copilot",
       "adapter_version": "0.1.0",
-      "content_hash": "sha256:24cc48ec595b74fc06c9426d4ec073b0eadaab59f2fb46ae9e15cbd8995b871d",
+      "content_hash": "sha256:4a4422a157c5448089669541f40ce6758cc069dc5424086d43284a7de72b9d54",
       "ownership": "generated",
       "path": ".github/copilot-instructions.md",
       "projection": "native",
@@ -198,7 +198,7 @@
     {
       "adapter": "codex",
       "adapter_version": "0.2.0",
-      "content_hash": "sha256:9fb7a934420d2737a0564364eb1b141a0dea9ab7a467e35ec26de42cc03a2553",
+      "content_hash": "sha256:89dd4fedca58c156e260f99dc19e2e26c66656c558a5d1a969c1e23fdbec67f7",
       "ownership": "generated",
       "path": "AGENTS.md",
       "projection": "native",
@@ -214,7 +214,7 @@
     }
   ],
   "profile": {
-    "digest": "sha256:bf32f8011e680692f418628e9544b09b0342403253b4f7b2c93c1c9e9b16fe97",
+    "digest": "sha256:b5af09c6f57fb49238b63aecd67f0ed682ab7ecf3c24b667a33e4678bc17fadd",
     "path": "projects/leerplatform.yaml"
   },
   "project": "leerplatform",
@@ -257,7 +257,7 @@
       "reason": "root",
       "status": "active",
       "type": "standard",
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "contributed_by": [
@@ -282,7 +282,7 @@
   ],
   "schema_version": 1,
   "source": {
-    "commit": "f33fba41fbc2507e08e78554c0a7a9eed1b958ff",
+    "commit": "91b9aa4e0bdb5b35f044d0953e5c273eb18383a1",
     "repository": "BlazeForce-NL/ai-capabilities"
   }
 }

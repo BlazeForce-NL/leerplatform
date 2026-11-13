@@ -51,3 +51,22 @@ This repository uses local Git hooks in `.githooks/`:
 - a commit-msg **verification guard** requires code-impacting commits to
   include a `Verification:` / `Tests: pnpm test` / `Gaps: ...` block
   (bypass only when genuinely not applicable: `SKIP_TEST_GUARD=1 git commit ...`).
+
+## Commands
+
+- `npm run lint`
+- `npm run test`
+
+## Testing and verification (agents)
+
+- Run the tests for the package or file you changed. Run the full unit suite when the change spans packages or the user asks for it.
+- Use a quiet reporter and keep output to the relevant failures. If piping through `tail -40`, enable `pipefail` so the test exit status is preserved.
+- Run the relevant typecheck and lint once before committing.
+- Run integration or end-to-end tests locally when changes touch database, queue, authentication or UI flows, or when requested.
+- After two failed fixes for the same test, report the failure and relevant output before retrying the same approach.
+- Keep full logs, lockfiles, generated code and build output out of the conversation. Quote the relevant lines.
+
+## Pull requests and CI
+
+- Open draft pull requests while work is in progress. Push changes in logical batches and mark the PR ready when it can be reviewed.
+- Use the `full-ci` label for migrations, integrations, authentication, queues or UI changes that affect end-to-end tests.
